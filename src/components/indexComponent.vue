@@ -26,25 +26,6 @@
                 </tr>
             </table>
         </div>
-
-<!--        <div class="divisions">-->
-<!--            <div v-for="division in divisions" v-bind:key="division.name" :class="division.name" class="division">-->
-<!--                <h2>{{division.name}}</h2>-->
-<!--                <ul class="member-list">-->
-<!--                    <li v-for="member in filteredList" v-bind:key="member.name"-->
-<!--                        v-if="member.knkv_age > division.min_age & member.knkv_age <= division.max_age"-->
-<!--                        class="member-wrapper">-->
-<!--                        <div :class="{'knkv-different': member.age !== member.knkv_age}" class="member">-->
-<!--                            <div class="name">-->
-<!--                                <span class="firstname">{{member.firstname}}</span> <span class="lastname">{{member.lastname}}</span>-->
-<!--                            </div>-->
-<!--                            <div class="age"><span>Leeftijd:</span>{{member.age}}</div>-->
-<!--                            <div class="knkv-age"><span>KNKV Leeftijd:</span>{{member.knkv_age}}</div>-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
     </main>
 </template>
 
