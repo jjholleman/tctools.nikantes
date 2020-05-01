@@ -1,6 +1,7 @@
 <template>
     <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <main>
+        <router-link to="/teambuilder">Ga naar TeamBuilder</router-link>
         <div class="search-wrapper">
             <label>
                 <input type="text" v-model="search" placeholder="Zoek speler..."/>
@@ -47,7 +48,8 @@
 <script>
     /* eslint-disable no-console */
     import moment from "moment";
-    import nikantesleden from '@/assets/nikantesleden.json'
+    import PlayerAPI from '@/api/Player'
+    import DivisionAPI from '@/api/Division'
 
     const now = moment();
     const august = 8;
@@ -61,43 +63,7 @@
             return {
                 search: "",
                 members: [],
-                divisions: [
-                    {
-                        name: "Senioren",
-                        max_age: 9999,
-                        min_age: 19
-                    },
-                    {
-                        name: "A",
-                        max_age: 19,
-                        min_age: 16
-                    },
-                    {
-                        name: "B",
-                        max_age: 16,
-                        min_age: 14
-                    },
-                    {
-                        name: "C",
-                        max_age: 14,
-                        min_age: 12
-                    },
-                    {
-                        name: "D",
-                        max_age: 12,
-                        min_age: 10
-                    },
-                    {
-                        name: "E",
-                        max_age: 10,
-                        min_age: 8
-                    },
-                    {
-                        name: "F",
-                        max_age: 8,
-                        min_age: 0
-                    }
-                ],
+                divisions: [],
                 currentSort: "knkv_age",
                 currentSortDir: "desc",
                 checkdate: this.getCheckDate(),
@@ -105,36 +71,8 @@
             };
         },
         mounted() {
-            let divisions = this.divisions;
-            let checkdate = this.checkdate;
-
-            nikantesleden.forEach(data => {
-              let person = {};
-                person.firstname = data.Roepnaam;
-                person.lastname = data.Achternaam;
-                person.middlename = data['Tussenvoegsel(s)'];
-                person.date_of_birth = moment(data.Geboortedatum, 'DD-MM-YYYY');
-                person.fullname = data["Volledige naam (1)"];
-
-                // Get the persons age and age on the checkdate
-                person.age = moment().diff(person.date_of_birth, "years");
-                person.knkv_age = moment(checkdate).diff(
-                    person.date_of_birth,
-                    "years"
-                );
-
-                // Calculate the lowest accepted team the person can play in, based on the divisions data
-                divisions.forEach(function (division) {
-                    if (
-                        person.knkv_age <= division.max_age &&
-                        person.knkv_age >= division.min_age
-                    ) {
-                        person.limit_team = division.name;
-                    }
-                });
-
-                this.members.push(person)
-            });
+            this.divisions = DivisionAPI.getAllDivisions();
+            this.members = PlayerAPI.getAllPlayers();
         },
         methods: {
             getCheckDate() {
@@ -260,6 +198,7 @@
             color: white;
             border: 2px solid #24557f;
             text-shadow: 0 0 10px #6897cd;
+            margin-top: 5px;
 
             &::placeholder {
                 color: #4a4a4a;
