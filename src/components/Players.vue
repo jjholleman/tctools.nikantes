@@ -8,11 +8,14 @@
                 <div class="search"></div>
             </label>
         </div>
-        <span
-                class="description"
-        >Het team waaronder een speler vermeldt staat is het LAAGSTE team waar het voor mag uitkomen.</span>
-        <span class="peildatum">Peildatum {{checkdate.format("DD-MM-YYYY")}}</span>
-        <button class="nextCheck-btn" @click="useNextCheckDate()">Peildatum instellen op nieuw seizoen</button>
+        <span class="description">
+            Het team waaronder een speler vermeldt staat is het LAAGSTE team waar het voor mag uitkomen.
+        </span>
+        <h3>Peildatum seizoen</h3>
+        <div class="checkDate-buttons">
+                <div class="checkDate-btn" :class="{active: !usingNextCheckDate}" @click="toggleCheckDate(usingNextCheckDate)">{{checkDate.format("YY")-1}}-{{checkDate.format("YY")}}</div>
+                <div class="checkDate-btn" :class="{active: usingNextCheckDate}" @click="toggleCheckDate(usingNextCheckDate)">{{nextCheckDate.format("YY")-1}}-{{nextCheckDate.format("YY")}}</div>
+        </div>
 
         <div class="members-table-container">
             <table class="members-table">
@@ -47,46 +50,40 @@
 
 <script>
     /* eslint-disable no-console */
-    import moment from "moment";
     import PlayerAPI from '@/api/Player'
     import DivisionAPI from '@/api/Division'
 
-    const now = moment();
-    const august = 8;
-
     export default {
-        name: "indexComponent",
+        name: "Players",
         props: {
             msg: String
         },
         data() {
             return {
                 search: "",
-                members: [],
+                players: [],
                 divisions: [],
                 currentSort: "knkv_age",
                 currentSortDir: "desc",
-                checkdate: this.getCheckDate(),
-                nextCheckDate: false
+                checkDate: PlayerAPI.getCheckDate(),
+                nextCheckDate: PlayerAPI.getCheckDate(true),
+                usingNextCheckDate: false,
             };
         },
         mounted() {
             this.divisions = DivisionAPI.getAllDivisions();
-            this.members = PlayerAPI.getAllPlayers();
+            this.players = PlayerAPI.get();
         },
         methods: {
-            getCheckDate() {
-                let date = moment().dayOfYear(1);
-                if (now.format("M") >= august) {
-                    date = date.set("year", now.year() + 1);
+            toggleCheckDate(next) {
+                let checkDate = this.checkDate;
+                if(next === false) {
+                    checkDate = this.nextCheckDate;
                 }
-                return date;
-            },
-            useNextCheckDate() {
-                let date = this.checkdate;
-                this.checkdate = date.set("year", now.year() + 1);
-                this.useNextCheckDate = true;
-                this.filterMembersList();
+                this.players.forEach(player => {
+                    return PlayerAPI.getPlayerKNKVAge(player, checkDate);
+                });
+                this.usingNextCheckDate = !this.usingNextCheckDate;
             },
             sortMembersTable(s) {
                 //if s == current sortMembersTable, reverse
@@ -96,31 +93,15 @@
                 this.currentSort = s;
             },
             filterMembersList() {
-                return this.members.filter(person => {
-                    if (this.useNextCheckDate == true) {
-                        person.original_knkv_age =
-                            moment(this.checkdate).diff(person.date_of_birth, "years") - 1;
-                        if (person.hasOwnProperty("knkv_changed") == false) {
-                            person.knkv_age = person.original_knkv_age + 1;
-                            this.divisions.forEach(function (division) {
-                                if (
-                                    person.knkv_age <= division.max_age &&
-                                    person.knkv_age >= division.min_age
-                                ) {
-                                    person.limit_team = division.name;
-                                }
-                            });
-                        }
-                        person.knkv_changed = true;
-                    }
+                return this.players.filter(person => {
                     return person.fullname.toLowerCase().includes(this.search.toLowerCase());
                 });
             }
         },
         computed: {
           sortedList() {
-                let members = this.filterMembersList();
-                return members.sort((a, b) => {
+                let players = this.filterMembersList();
+                return players.sort((a, b) => {
                     let modifier = 1;
                     if (this.currentSortDir === "desc") modifier = -1;
                     if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
@@ -135,7 +116,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
     h3 {
-        margin: 40px 0 0;
+        margin: 0 0 0;
     }
 
     ul {
@@ -224,9 +205,32 @@
         }
     }
 
-    .nextCheck-btn {
-        display: block;
-        text-align: center;
-        margin: 0 auto;
+    .checkDate-buttons {
+        margin-top: 8px;
+
+        .checkDate-btn {
+            display: inline;
+            border: 2px solid black;
+            padding: 6px;
+            border-radius: 10px;
+
+            &:first-child {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            &:last-child {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            &:hover, &:active {
+                cursor: pointer;
+            }
+            &.active {
+                background-color: black;
+                color: white;
+                font-weight: bold;
+            }
+        }
     }
 </style>

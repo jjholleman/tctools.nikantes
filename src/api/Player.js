@@ -1,50 +1,58 @@
-import nikantesleden from '@/assets/nikantesleden.json'
+/* eslint-disable no-console */
 import DivisionAPI from '@/api/Division'
 import moment from 'moment'
+import {db} from './../firebase'
 
 export default {
-    getAllPlayers(nextSeason) {
-        let players = [];
-        nikantesleden.forEach(data => {
-            let person = {};
-            person.firstname = data.Roepnaam;
-            person.lastname = data.Achternaam;
-            person.middlename = data['Tussenvoegsel(s)'];
-            person.date_of_birth = moment(data.Geboortedatum, 'DD-MM-YYYY');
-            person.fullname = data["Volledige naam (1)"];
-
-            // Get the persons age and age on the checkdate
-            person.age = moment().diff(person.date_of_birth, "years");
-            if(nextSeason === true) {
-                let checkdate = moment(this.getCheckDate()).set("year", moment().year() + 1);
-                person.knkv_age = moment(checkdate).diff(person.date_of_birth, 'years')
-            } else{
-                person.knkv_age = moment(this.getCheckDate()).diff(
-                    person.date_of_birth,
-                    "years"
-                );
-            }
-
-            // Calculate the lowest accepted team the person can play in, based on the divisions data
-            DivisionAPI.getAllDivisions().forEach(function (division) {
-                if (
-                    person.knkv_age <= division.max_age &&
-                    person.knkv_age >= division.min_age
-                ) {
-                    person.limit_team = division.name;
-                }
-
-            });
-
-            players.push(person)
-        });
-        return players;
+    data: {
+        players: [],
     },
-    getCheckDate() {
-            let date = moment().dayOfYear(1);
-            if (moment().format("M") >= 7) { //7 = August. Moment starts months from 0
-                date = date.set("year", moment().year() + 1);
+    firestore() {
+        return {
+            players: db.collection('players')
+        }
+    },
+    get(nextSeason) {
+        this.firestore().players.orderBy('date_of_birth', "desc").onSnapshot({includeMetadataChanges: true}, querySnapshot => {
+            querySnapshot.docChanges().forEach(change => {
+                let player = change.doc.data();
+                player = this.generateAdditionalPlayerData(player, nextSeason);
+                this.data.players.push(player);
+            });
+        });
+        return this.data.players
+    },
+    generateAdditionalPlayerData(player, nextSeason) {
+        player = this.getPlayerKNKVAge(player, this.getCheckDate(nextSeason));
+        player.fullname = [player.firstname, player.middlename, player.lastname].join(" ");
+        return player;
+    },
+    getPlayerKNKVAge(player, checkDate) {
+        // Get the persons age and age on the checkDate
+        let date_of_birth = moment(player.date_of_birth.toDate());
+        player.age = moment().diff(date_of_birth, "years");
+        player.knkv_age = moment(checkDate).diff(date_of_birth, 'years');
+
+        // Calculate the lowest accepted team the person can play in, based on the divisions data
+        DivisionAPI.getAllDivisions().forEach(function (division) {
+            if (
+                player.knkv_age <= division.max_age &&
+                player.knkv_age >= division.min_age
+            ) {
+                player.limit_team = division.name;
             }
-            return date;
+
+        });
+        return player;
+    },
+    getCheckDate(useNextSeason) {
+        let date = moment().dayOfYear(1);
+        if (moment().format("M") >= 7) { //7 = August. Moment starts months from 0
+            date = date.set("year", moment().year() + 1);
+        }
+        if (useNextSeason === true) {
+            date = date.set("year", moment().year() + 1);
+        }
+        return date
     },
 }

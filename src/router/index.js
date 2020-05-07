@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import indexComponent from "@/components/indexComponent";
+import Players from "@/components/Players";
 import TeamBuilder from "../components/TeamBuilder";
 import Multiselect from 'vue-multiselect'
 
@@ -12,8 +12,12 @@ export default new Router({
     routes: [
         {
             path: '',
-            name: 'indexComponent',
-            component: indexComponent
+            name: 'Players',
+            component: Players
+        },
+        {
+            path: '/',
+            redirect: Players
         },
         {
             path: '/teambuilder',

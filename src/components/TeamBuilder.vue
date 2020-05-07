@@ -3,18 +3,21 @@
     <main>
         <router-link to="/">Ga naar Spelerslijst</router-link>
         <label class="typo__label">TeamBuilder</label>
-        <multiselect v-model="selected"
-                     tag-placeholder="Kies speler"
-                     placeholder="Zoek speler"
-                     label="fullname" track-by="fullname"
-                     :options="players"
-                     :multiple="true"
-                     :taggable="true"
-                     ></multiselect>
+        <multiselect
+                v-model="selected"
+                tag-placeholder="Kies speler"
+                placeholder="Zoek speler"
+                label="fullname" track-by="fullname"
+                :custom-label="customLabel"
+                :options="players"
+                :multiple="true"
+                :taggable="true"
+        ></multiselect>
         <div class="average-age">Gemiddelde leeftijd: {{getAverageTeamAge()}}</div>
         <ul v-if="selected" class="selected-list">
             <li v-for="player in selected" :key="player.fullname">
-                <div>{{player.firstname}}<span v-if="player.middlename != ''"> {{player.middlename}}</span> {{player.lastname}}<span> ({{player.knkv_age}})</span><span> [{{player.limit_team}}]</span></div>
+                <div>{{player.firstname}}<span v-if="player.middlename != ''"> {{player.middlename}}</span>
+                    {{player.lastname}}<span> ({{player.knkv_age}})</span><span> [{{player.limit_team}}]</span></div>
             </li>
         </ul>
         <pre class="language-json"><code>{{ selected  }}</code></pre>
@@ -38,18 +41,21 @@
         },
         mounted() {
             this.divisions = DivisionAPI.getAllDivisions();
-            this.players = PlayerAPI.getAllPlayers(true);
+            this.players = PlayerAPI.get(true)
         },
         methods: {
-            getAverageTeamAge(){
+            getAverageTeamAge() {
                 let ages = [];
                 this.selected.forEach(player => {
                     ages.push(player.knkv_age)
                 });
-                if(ages.length > 0) {
+                if (ages.length > 0) {
                     let sum = ages.reduce((previous, current) => current += previous);
                     return sum / ages.length;
                 }
+            },
+            customLabel({fullname, knkv_age}) {
+                return `${fullname} (${knkv_age})`
             }
         },
     };
@@ -61,10 +67,12 @@
         display: block;
         margin-top: 5px;
     }
+
     .average-age {
         margin-top: 20px;
         font-weight: bold;
     }
+
     .selected-list {
         list-style: none;
     }
