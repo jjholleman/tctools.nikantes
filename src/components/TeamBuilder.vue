@@ -1,7 +1,7 @@
 <template>
     <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <main>
-        <router-link to="/">Ga naar Spelerslijst</router-link>
+        <v-alert type="warning" dismissible prominent>In Ontwikkeling</v-alert>
         <label class="typo__label">TeamBuilder</label>
         <multiselect
                 v-model="selected"

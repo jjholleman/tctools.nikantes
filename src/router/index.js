@@ -4,7 +4,7 @@ import Players from "@/components/Players";
 import TeamBuilder from "../components/TeamBuilder";
 import Multiselect from 'vue-multiselect'
 
-Vue.component('multiselect', Multiselect)
+Vue.component('multiselect', Multiselect);
 Vue.use(Router);
 
 export default new Router({
