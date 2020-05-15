@@ -13,13 +13,15 @@ export default {
         }
     },
     get(nextSeason) {
+        let players = [];
         this.firestore().players.orderBy('date_of_birth', "desc").onSnapshot({includeMetadataChanges: true}, querySnapshot => {
             querySnapshot.docChanges().forEach(change => {
                 let player = change.doc.data();
                 player = this.generateAdditionalPlayerData(player, nextSeason);
-                this.data.players.push(player);
+                players.push(player);
             });
         });
+        this.data.players = players;
         return this.data.players
     },
     generateAdditionalPlayerData(player, nextSeason) {
