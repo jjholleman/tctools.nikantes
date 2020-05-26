@@ -27,11 +27,7 @@
         </v-app-bar>
 
         <v-content>
-            <v-row align="center" justify="center">
-                <v-col class="text-center">
-                    <router-view></router-view>
-                </v-col>
-            </v-row>
+            <router-view></router-view>
         </v-content>
         <v-footer app color="indigo">
             <span class="white--text">&copy; 2020-{{moment().year()}} Jordi Holleman</span>
@@ -40,7 +36,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+    import moment from 'moment';
 
     export default {
         name: 'app',
@@ -51,7 +47,7 @@ import moment from 'moment';
             drawer: null,
         }),
         methods: {
-            moment: function() {
+            moment: function () {
                 return moment();
             }
         }
