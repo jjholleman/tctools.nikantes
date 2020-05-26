@@ -19,11 +19,11 @@
                             <v-col class="checkdate-controls" cols="12">
                                 <div>Peildatum seizoen:</div>
                                 <v-btn-toggle v-model="toggle_checkdate_btn" mandatory>
-                                    <v-btn :class="{active: !usingNextCheckDate}" @click="toggleCheckDate(usingNextCheckDate)"
+                                    <v-btn @click="toggleCheckDate(0)"
                                            class="checkDate-btn">
                                         {{checkDate.format("YY")-1}}-{{checkDate.format("YY")}}
                                     </v-btn>
-                                    <v-btn :class="{active: usingNextCheckDate}" @click="toggleCheckDate(usingNextCheckDate)"
+                                    <v-btn @click="toggleCheckDate(1)"
                                            class="checkDate-btn">
                                         {{nextCheckDate.format("YY")-1}}-{{nextCheckDate.format("YY")}}
                                     </v-btn>
@@ -73,14 +73,13 @@
         data() {
             return {
                 search: "",
-                toggle_checkdate_btn: undefined,
+                toggle_checkdate_btn: 0,
                 players: [],
                 divisions: [],
                 currentSort: "knkv_age",
                 currentSortDir: "desc",
                 checkDate: PlayerAPI.getCheckDate(),
                 nextCheckDate: PlayerAPI.getCheckDate(true),
-                usingNextCheckDate: false,
             };
         },
         mounted() {
@@ -90,13 +89,12 @@
         methods: {
             toggleCheckDate(next) {
                 let checkDate = this.checkDate;
-                if (next === false) {
+                if (next === 1) {
                     checkDate = this.nextCheckDate;
                 }
                 this.players.forEach(player => {
                     return PlayerAPI.getPlayerKNKVAge(player, checkDate);
                 });
-                this.usingNextCheckDate = !this.usingNextCheckDate;
             },
             sortMembersTable(s) {
                 //if s == current sortMembersTable, reverse
