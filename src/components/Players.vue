@@ -3,7 +3,7 @@
     <v-container class="text-center">
         <v-card class="player-list-container">
             <v-card-title>
-                SPELERS
+                SPELERS <v-btn fab dark small color="primary" link :to="{path: '/add-player/'}"><v-icon dark>mdi-account-plus</v-icon></v-btn>
                 <v-spacer></v-spacer>
                 <v-text-field
                         v-model="search"
@@ -48,6 +48,7 @@
                             <v-list-item>Leeftijd op peildatum: {{player.knkv_age}}</v-list-item>
                             <v-list-item>Laagst mogelijke team: {{player.limit_team}}</v-list-item>
                         </v-list>
+                        <v-btn link :to="{path: '/player/'+player.id}"><v-icon left>mdi-pencil</v-icon>BEWERKEN</v-btn>
                     </v-expansion-panel-content>
                 </v-expansion-panel>
             </v-expansion-panels>
@@ -80,7 +81,7 @@
         },
         mounted() {
             this.divisions = DivisionAPI.getAllDivisions();
-            this.players = PlayerAPI.get();
+            this.players = PlayerAPI.getAll();
         },
         methods: {
             toggleCheckDate(next) {

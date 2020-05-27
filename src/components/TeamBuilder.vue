@@ -41,7 +41,7 @@
         },
         mounted() {
             this.divisions = DivisionAPI.getAllDivisions();
-            this.players = PlayerAPI.get(true)
+            this.players = PlayerAPI.getAll(true);
         },
         methods: {
             getAverageTeamAge() {

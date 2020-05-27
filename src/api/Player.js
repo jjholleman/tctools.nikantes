@@ -6,22 +6,27 @@ import {db} from './../firebase'
 export default {
     data: {
         players: [],
+        player: {},
     },
     firestore() {
         return {
             players: db.collection('players')
         }
     },
-    get(nextSeason) {
-        let players = [];
+    getAll(nextSeason, update) {
+        return this.data.players.length === 0 || update === true ? this.setAll(nextSeason) : this.data.players;
+    },
+    setAll(nextSeason) {
+        let collection = [];
         this.firestore().players.orderBy('date_of_birth', "desc").onSnapshot({includeMetadataChanges: true}, querySnapshot => {
             querySnapshot.docChanges().forEach(change => {
                 let player = change.doc.data();
+                player.id = change.doc.id;
                 player = this.generateAdditionalPlayerData(player, nextSeason);
-                players.push(player);
+                collection.push(player)
             });
         });
-        this.data.players = players;
+        this.data.players = collection;
         return this.data.players
     },
     generateAdditionalPlayerData(player, nextSeason) {
