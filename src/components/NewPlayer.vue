@@ -21,6 +21,7 @@
 
     import {db} from './../firebase'
     import * as firebase from "firebase/app";
+    import LogAPI from "../api/Log";
 
     export default {
         name: "NewPlayer",
@@ -49,6 +50,7 @@
                         lastname: this.player.lastname,
                         date_of_birth: firebase.firestore.Timestamp.fromDate(new Date(this.player.formatted_date_of_birth))
                     }).then((docRef) => {
+                        LogAPI.createPlayer(this.player, docRef.id);
                         this.$router.push('/player/'+ docRef.id)
                     })
                 }

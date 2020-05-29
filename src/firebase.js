@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { firebase } from "@firebase/app";
 import "@firebase/firestore";
+import "@firebase/analytics";
 
 const firebaseApp = firebase.initializeApp({
     apiKey: "AIzaSyA0mfK6ikcIQxhAT1rQH6yMMLQ93t3J47s",
@@ -16,6 +17,7 @@ const firebaseApp = firebase.initializeApp({
 firebaseApp.firestore().enablePersistence().catch(error => {
     console.log(error)
 });
+firebase.analytics();
 
 export const db = firebaseApp.firestore();
 export const Firebase = firebase;

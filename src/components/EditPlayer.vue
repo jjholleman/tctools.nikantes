@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container v-if="this.player">
         <v-text-field label="Voornaam" :value="this.player.firstname" v-model="player.firstname"></v-text-field>
         <v-text-field label="Tussenvoegsel" :value="this.player.middlename" v-model="player.middlename"></v-text-field>
         <v-text-field label="Achternaam" :value="this.player.lastname" v-model="player.lastname"></v-text-field>
@@ -18,6 +18,7 @@
 <script>
     import {db} from './../firebase'
     import PlayerAPI from "../api/Player";
+    import LogAPI from "../api/Log";
     import moment from 'moment'
     import * as firebase from "firebase/app";
 
@@ -26,6 +27,7 @@
         data() {
             return {
                 player: {},
+                original_player: {}
             }
         },
         firestore() {
@@ -34,7 +36,10 @@
                     ref: db.collection('players').doc(this.$route.params.id),
                     resolve: (data) => {
                         this.player = PlayerAPI.generateAdditionalPlayerData(data);
-                        this.player.formatted_date_of_birth = moment(data.date_of_birth.toDate()).format('yyyy-MM-DD')
+                        this.player.formatted_date_of_birth = moment(data.date_of_birth.toDate()).format('yyyy-MM-DD');
+                        if(this.player){
+                            this.original_player = Object.assign({}, this.player)
+                        }
                     }
                 }
             }
@@ -44,18 +49,22 @@
         },
         methods: {
             updatePlayer() {
-                this.$firestore.playerRef.update({
-                    firstname: this.player.firstname,
-                    middlename: this.player.middlename,
-                    lastname: this.player.lastname,
-                    date_of_birth: firebase.firestore.Timestamp.fromDate(new Date(this.player.formatted_date_of_birth))
-                });
-                PlayerAPI.setAll();
+                if(JSON.stringify(this.player) !== JSON.stringify(this.original_player)) {
+                    this.$firestore.playerRef.update({
+                        firstname: this.player.firstname,
+                        middlename: this.player.middlename,
+                        lastname: this.player.lastname,
+                        date_of_birth: firebase.firestore.Timestamp.fromDate(new Date(this.player.formatted_date_of_birth))
+                    });
+                    LogAPI.updatePlayer(this.original_player, this.player);
+                    PlayerAPI.setAll();
+                }
                 this.$router.push('/')
             },
             deletePlayer() {
                 if(confirm("Weet je zeker dat je deze speler wilt verwijderen?") === true) {
                     this.$firestore.playerRef.delete().then(() => {
+                        LogAPI.deletePlayer(this.player);
                         PlayerAPI.setAll();
                         this.$router.push('/')
                     })
