@@ -110,6 +110,19 @@
                                         <v-list-item>E-klasse, spelers van 11 jaar of ouder</v-list-item>
                                         <v-list-item>F-klasse, spelers van 9 jaar of ouder</v-list-item>
                                     </v-list>
+                                    <div>
+                                        In de laagste klasse van de wedstrijdkorfbalcompetitie en de
+                                        breedtekorfbalcompetitie voor A-jeugd mogen senioren die op 31 december 19 jaar
+                                        zijn deelnemen, mits zij niet zijn opgegeven voor een seniorenploeg en de
+                                        gemiddelde leeftijd van het A-team de 18,0 jaar niet overschrijdt. Het
+                                        Bondsbestuur kan deze toestemming beperken tot het uitkomen in bepaalde
+                                        afdelingen van een competitie voor A-jeugd. Aan de toestemming kunnen
+                                        voorwaarden worden verbonden.
+                                    </div>
+                                    <div>
+                                        Spelers mogen vanaf de dag, waarop zij 5 jaar worden, uitkomen in de
+                                        competities voor F-jeugd.
+                                    </div>
                                 </v-card-text>
                             </v-card>
                         </v-tab-item>
