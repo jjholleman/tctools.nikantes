@@ -53,12 +53,14 @@ export default {
         return player;
     },
     getCheckDate(useNextSeason) {
-        let date = moment().dayOfYear(1);
-        if (moment().format("M") >= 7) { //7 = August. Moment starts months from 0
-            date = date.set("year", moment().year() + 1);
+        let date = moment();
+        if (date.month() >= 7) { //7 = August. Moment starts months from 0
+            date = date.endOf('year')
+        } else {
+            date = date.year(date.year()-1).endOf('year')
         }
         if (useNextSeason === true) {
-            date = date.set("year", moment().year() + 1);
+            date = date.set("year", date.year()+1);
         }
         return date
     },

@@ -2,7 +2,15 @@
     <v-app id="inspire">
         <v-navigation-drawer app v-model="drawer">
             <v-list dense>
-                <v-list-item link :to="{path: '/'}">
+                <v-list-item link :to="{name: 'Home'}" exact>
+                    <v-list-item-action>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Home</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link :to="{name: 'Players'}">
                     <v-list-item-action>
                         <v-icon>mdi-account-details</v-icon>
                     </v-list-item-action>
@@ -10,7 +18,7 @@
                         <v-list-item-title>Spelers</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item link :to="{path: '/teambuilder'}">
+                <v-list-item link :to="{name: 'TeamBuilder'}">
                     <v-list-item-action>
                         <v-icon>mdi-account-group</v-icon>
                     </v-list-item-action>

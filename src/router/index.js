@@ -7,6 +7,7 @@ import Multiselect from 'vue-multiselect'
 import EditPlayer from "../components/EditPlayer";
 import NewPlayer from "../components/NewPlayer";
 import Login from "../components/Login";
+import Home from "../components/Home";
 
 Vue.component('multiselect', Multiselect);
 Vue.use(Router);
@@ -16,12 +17,17 @@ export default new Router({
     routes: [
         {
             path: '',
-            name: 'Players',
-            component: Players
+            name: 'Home',
+            component: Home
         },
         {
             path: '/',
-            redirect: Players
+            redirect: Home
+        },
+        {
+            path: '/players',
+            name: 'Players',
+            component: Players
         },
         {
             path: '/login',

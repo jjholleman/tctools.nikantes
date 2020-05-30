@@ -66,7 +66,7 @@
                     this.$firestore.playerRef.delete().then(() => {
                         LogAPI.deletePlayer(this.player);
                         PlayerAPI.setAll();
-                        this.$router.push('/')
+                        this.$router.push({name: 'Players'})
                     })
                 }
             }
