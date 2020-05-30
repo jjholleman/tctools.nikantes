@@ -36,6 +36,8 @@
 </template>
 
 <script>
+    /* eslint-disable no-console */
+
     import moment from 'moment';
 
     export default {
@@ -49,7 +51,11 @@
         methods: {
             moment: function () {
                 return moment();
-            }
+            },
         }
     }
 </script>
+
+<style lang="scss" scoped>
+
+</style>
