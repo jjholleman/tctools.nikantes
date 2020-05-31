@@ -13,7 +13,7 @@
                                     <v-expansion-panel-content>
                                         <v-list>
                                             <v-list-item>
-                                                <a href="https://knkv.sharepoint.com/downloads/Gedeelde%20%20documenten/Over%20KNKV/Organisatie/Organisatie/Statuten%20en%20reglementen/3_RvW.pdf"
+                                                <a href="./documents/3_RvW.pdf"
                                                    target="_blank">
                                                     <v-icon left>mdi-pdf-box</v-icon>
                                                     Reglement van Wedstrijden
@@ -26,14 +26,14 @@
                                                 </a>
                                             </v-list-item>
                                             <v-list-item>
-                                                <a href="https://knkv.sharepoint.com/downloads/Gedeelde%20%20documenten/Competitie/Spelregels/Spelregelboek_2017.pdf"
+                                                <a href="./documents/Spelregelboek_2017.pdf"
                                                    target="_blank">
                                                     <v-icon left>mdi-pdf-box</v-icon>
                                                     Spelregels 2017
                                                 </a>
                                             </v-list-item>
                                             <v-list-item>
-                                                <a href="https://knkv.sharepoint.com/downloads/Gedeelde%20%20documenten/Competitie/Spelbepalingen.pdf"
+                                                <a href="./documents/Spelbepalingen.pdf"
                                                    target="_blank">
                                                     <v-icon left>mdi-pdf-box</v-icon>
                                                     Spelbepalingen
