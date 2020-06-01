@@ -18,7 +18,10 @@ export default new Router({
         {
             path: '',
             name: 'Home',
-            component: Home
+            component: Home,
+            meta: {
+                title: 'Nikantes TC Tools',
+            }
         },
         {
             path: '/',
@@ -27,23 +30,35 @@ export default new Router({
         {
             path: '/players',
             name: 'Players',
-            component: Players
+            component: Players,
+            meta: {
+                title: ' Spelers - Nikantes TC Tools',
+            }
         },
         {
             path: '/login',
             name: "Login",
             component: Login,
             props: true,
+            meta: {
+                title: 'Login - Nikantes TC Tools',
+            }
         },
         {
             path: '/teambuilder',
             name: 'TeamBuilder',
-            component: TeamBuilder
+            component: TeamBuilder,
+            meta: {
+                title: 'TeamBuilder - Nikantes TC Tools',
+            }
         },
         {
             path: '/player/:id',
             name: 'player',
             component: EditPlayer,
+            meta: {
+                title: 'Speler bewerken - Nikantes TC Tools',
+            },
             beforeEnter: (to, from, next) => {
                 const lastLogin = moment(new Date(localStorage.getItem("lastLogin")));
                 const now = moment();
@@ -67,6 +82,9 @@ export default new Router({
             path: '/add-player',
             name: 'add-player',
             component: NewPlayer,
+            meta: {
+                title: 'Nieuwe speler - Nikantes TC Tools',
+            },
             beforeEnter: (to, from, next) => {
                 const lastLogin = moment(new Date(localStorage.getItem("lastLogin")));
                 const now = moment();
