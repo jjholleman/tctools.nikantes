@@ -1,10 +1,29 @@
 <template>
     <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
-    <v-container class="text-center">
-        <v-card class="player-list-container">
-            <v-card-title>
-                SPELERS <v-btn fab dark small color="primary" link :to="{path: '/add-player/'}"><v-icon dark>mdi-account-plus</v-icon></v-btn>
-                <v-spacer></v-spacer>
+    <v-container>
+        <v-row>
+            <v-col class="flex-grow-0" cols="12" sm="auto" order-sm="2">
+                <v-btn color="primary"
+                       class="mt-sm-1 pa-2"
+                       outlined link :to="{name: 'add-player'}">
+                    <v-icon left>mdi-account-plus</v-icon>
+                    Nieuwe speler
+                </v-btn>
+            </v-col>
+            <v-col>
+                <v-switch v-model="showSeniors"
+                          hide-details
+                          class="d-inline-flex mt-1 mt-sm-1 pa-2"
+                          label="Senioren"/>
+                <v-switch v-model="toggle_checkdate_btn"
+                          hide-details
+                          class="d-inline-flex mt-1 mt-sm-1 pa-2"
+                          @change="toggleCheckDate(toggle_checkdate_btn)"
+                          :label="checkDateLabel"/>
+            </v-col>
+        </v-row>
+        <v-row no-gutters>
+            <v-col cols="12" sm="6">
                 <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
@@ -12,47 +31,46 @@
                         single-line
                         hide-details
                 ></v-text-field>
-            </v-card-title>
-            <v-row>
-                <v-col class="checkdate-controls" cols="12">
-                    <div>Peildatum seizoen:</div>
-                    <v-btn-toggle v-model="toggle_checkdate_btn" mandatory>
-                        <v-btn @click="toggleCheckDate(0)"
-                               class="checkDate-btn">
-                            {{checkDate.format("YY")-1}}-{{checkDate.format("YY")}}
-                        </v-btn>
-                        <v-btn @click="toggleCheckDate(1)"
-                               class="checkDate-btn">
-                            {{nextCheckDate.format("YY")-1}}-{{nextCheckDate.format("YY")}}
-                        </v-btn>
-                    </v-btn-toggle>
-                </v-col>
-                <v-col cols="12">
-                    Sorteer op:
-                    <v-btn @click="sortMembersTable('firstname')" x-small outlined>Naam</v-btn>
-                    <v-btn @click="sortMembersTable('knkv_age')" x-small outlined>Leeftijd (KNKV)</v-btn>
-                </v-col>
-            </v-row>
-            <v-expansion-panels>
-                <v-expansion-panel
-                        :key="index"
-                        class="player"
-                        v-for="(player, index) in sortedList"
-                        v-if="player.knkv_age <= 19"
-                >
-                    <v-expansion-panel-header>{{player.fullname}} ({{player.knkv_age}})</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                        <v-list>
-                            <v-list-item>Geboortedatum: {{player.date_of_birth.toDate() | moment}}</v-list-item>
-                            <v-list-item>Leeftijd: {{player.age}}</v-list-item>
-                            <v-list-item>Leeftijd op peildatum: {{player.knkv_age}}</v-list-item>
-                            <v-list-item>Laagst mogelijke team: {{player.limit_team}}</v-list-item>
-                        </v-list>
-                        <v-btn link :to="{path: '/player/'+player.id}"><v-icon left>mdi-pencil</v-icon>BEWERKEN</v-btn>
-                    </v-expansion-panel-content>
-                </v-expansion-panel>
-            </v-expansion-panels>
-        </v-card>
+            </v-col>
+            <v-col cols="12" sm="3" offset="1" offset-md="0.5" class="sort-controls">
+                <div>Sorteren</div>
+                <v-btn @click="sortMembersTable('firstname')" x-small outlined>Naam</v-btn>
+                <v-btn @click="sortMembersTable('knkv_age')" x-small outlined>Leeftijd (KNKV)</v-btn>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col>
+                <v-card outlined flat>
+                    <v-expansion-panels tile accordion>
+                        <v-expansion-panel
+                                :key="index"
+                                class="player"
+                                v-for="(player, index) in sortedList"
+                                v-if="showSeniors || player.knkv_age <= 19"
+                        >
+                            <v-expansion-panel-header>{{player.fullname}} ({{player.knkv_age}})
+                            </v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                                <v-list>
+                                    <v-list-item>Geboortedatum: {{player.date_of_birth.toDate() | moment}}</v-list-item>
+                                    <v-list-item>Leeftijd: {{player.age}}</v-list-item>
+                                    <v-list-item>Leeftijd op peildatum: {{player.knkv_age}}</v-list-item>
+                                    <v-list-item>Laagst mogelijke team: {{player.limit_team}}</v-list-item>
+                                </v-list>
+                                <v-row class="text-center">
+                                    <v-col>
+                                        <v-btn link :to="{path: '/player/'+player.id}">
+                                            <v-icon left>mdi-pencil</v-icon>
+                                            BEWERKEN
+                                        </v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </v-card>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -70,13 +88,15 @@
         data() {
             return {
                 search: "",
-                toggle_checkdate_btn: 0,
+                toggle_checkdate_btn: false,
                 players: [],
                 divisions: [],
                 currentSort: "knkv_age",
                 currentSortDir: "desc",
                 checkDate: PlayerAPI.getCheckDate(),
                 nextCheckDate: PlayerAPI.getCheckDate(true),
+                showSeniors: false,
+                checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add("year", 1).format("YY"),
             };
         },
         mounted() {
@@ -86,7 +106,7 @@
         methods: {
             toggleCheckDate(next) {
                 let checkDate = this.checkDate;
-                if (next === 1) {
+                if (next === true) {
                     checkDate = this.nextCheckDate;
                 }
                 this.players.forEach(player => {
@@ -116,7 +136,7 @@
                     if (a[this.currentSort] > b[this.currentSort]) return modifier;
                     return 0;
                 });
-            }
+            },
         },
         filters: {
             moment: function (date) {
@@ -128,5 +148,15 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-
+    .v-data-table__expanded__content{
+        box-shadow: none;
+    }
+    .expansion-td {
+        background: white;
+        padding: 0 10px 10px;
+    }
+    .player-expand-list {
+        box-shadow: none;
+        background: transparent;
+    }
 </style>
