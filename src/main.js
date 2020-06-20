@@ -9,7 +9,10 @@ Vue.config.productionTip = false;
 Vue.use(VueFirestore);
 
 router.beforeEach((to,from,next) => {
-  document.title = to.meta.page +' - '+ to.meta.title;
+  document.title = to.meta.title;
+  if(to.meta.page) {
+    document.title = to.meta.page +' - '+ document.title
+  }
   next();
 });
 
