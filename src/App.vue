@@ -18,9 +18,17 @@
                         <v-list-item-title>Spelers</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item link :to="{name: 'TeamBuilder'}">
+                <v-list-item link :to="{name: 'Teams'}">
                     <v-list-item-action>
                         <v-icon>mdi-account-group</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                        <v-list-item-title>Teams</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item link :to="{name: 'TeamBuilder'}">
+                    <v-list-item-action>
+                        <v-icon>mdi-account-switch</v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
                         <v-list-item-title>TeamBuilder</v-list-item-title>

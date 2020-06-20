@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import moment from 'moment'
+import Login from "@/components/Login";
+import Home from "@/components/Home";
 import Players from "@/components/Players";
-import TeamBuilder from "../components/TeamBuilder";
+import EditPlayer from "@/components/EditPlayer";
+import NewPlayer from "@/components/NewPlayer";
+import Teams from "@/components/Teams";
+import TeamBuilder from "@/components/TeamBuilder";
 import Multiselect from 'vue-multiselect'
-import EditPlayer from "../components/EditPlayer";
-import NewPlayer from "../components/NewPlayer";
-import Login from "../components/Login";
-import Home from "../components/Home";
+import Utils from "../api/Utils";
 
 Vue.component('multiselect', Multiselect);
 Vue.use(Router);
@@ -34,6 +35,24 @@ export default new Router({
             meta: {
                 title: 'Nikantes TC Tools',
                 page: 'Spelers',
+            }
+        },
+        {
+            path: '/players',
+            name: 'Players',
+            component: Players,
+            meta: {
+                title: 'Nikantes TC Tools',
+                page: 'Spelers',
+            }
+        },
+        {
+            path: '/teams',
+            name: 'Teams',
+            component: Teams,
+            meta: {
+                title: 'Nikantes TC Tools',
+                page: 'Teams',
             }
         },
         {
@@ -64,10 +83,7 @@ export default new Router({
                 page: 'Speler bewerken',
             },
             beforeEnter: (to, from, next) => {
-                const lastLogin = moment(new Date(localStorage.getItem("lastLogin")));
-                const now = moment();
-                const diff = now.diff(lastLogin, 'days');
-                if (diff > 30) {
+                if (Utils.timeSinceLogin() > 30) {
                     next({
                         name: 'Login',
                         query: {
@@ -91,10 +107,7 @@ export default new Router({
                 page: 'Nieuwe speler',
             },
             beforeEnter: (to, from, next) => {
-                const lastLogin = moment(new Date(localStorage.getItem("lastLogin")));
-                const now = moment();
-                const diff = now.diff(lastLogin, 'days');
-                if (diff > 30) {
+                if (Utils.timeSinceLogin() > 30) {
                     next({
                         name: 'Login',
                         query: {
