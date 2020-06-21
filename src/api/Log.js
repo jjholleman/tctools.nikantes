@@ -97,4 +97,43 @@ export default {
             })
         });
     },
+    deleteTeam(team) {
+        ip.then(ip => {
+            logRef.add({
+                action: "DELETE",
+                source: {
+                    type: "document",
+                    collection: "teams",
+                    ref: team[".key"],
+                },
+                data: {
+                    delete: team,
+                },
+                created_at: firebase.firestore.Timestamp.fromDate(new Date()),
+                userAgent: navigator.userAgent,
+                ip: ip,
+            }).then(() => {
+            })
+        });
+    },
+    updateTeam(originalTeam, newTeam) {
+        ip.then(ip => {
+            logRef.add({
+                action: "UPDATE",
+                source: {
+                    type: "document",
+                    collection: "teams",
+                    ref: originalTeam[".key"],
+                },
+                data: {
+                    old: originalTeam,
+                    patch: newTeam,
+                },
+                created_at: firebase.firestore.Timestamp.fromDate(new Date()),
+                userAgent: navigator.userAgent,
+                ip: ip,
+            }).then(() => {
+            })
+        });
+    },
 }

@@ -12,7 +12,7 @@
             <v-col>
                 <div v-for="(team, index) in teams" :key="index">
                     <v-row>
-                        {{team.division}} {{team.divrank}}
+                        <v-btn text link :to="{path: '/team/'+team['.key']}">{{team.division}} {{team.divrank}}</v-btn>
                     </v-row>
                 </div>
             </v-col>
@@ -37,7 +37,8 @@
                 teamsRef: {
                     ref: db.collection('teams'),
                     resolve: (data) => {
-                        this.teams = data
+                        this.teams = data;
+                        this.sortTeams(this.teams)
                     }
                 }
             }
@@ -45,7 +46,13 @@
         mounted() {
 
         },
-        methods: {},
+        methods: {
+            sortTeams(teams) {
+                teams.sort((a,b) => {
+                    return b.divisionIndex-a.divisionIndex;
+                })
+            }
+        },
     };
 </script>
 

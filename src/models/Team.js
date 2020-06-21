@@ -1,8 +1,21 @@
+import DivisionAPI from "../api/Division";
+
 export class Team {
     constructor(data) {
         this._division = data.division;
         this._divrank = data.divrank;
-        this._players = data.players || [];
+        this._players = data.players || {males: [], females: []};
+        this._divisionIndex = "";
+        this.setDivisionIndex()
+    }
+
+    setDivisionIndex() {
+        const divisions = DivisionAPI.getAllDivisions();
+        divisions.forEach(division => {
+            if (division.name === this._division) {
+                this._divisionIndex = division.indexId - (this._divrank / 100);
+            }
+        });
     }
 
     get divrank() {
@@ -38,6 +51,7 @@ export class Team {
             division: this._division,
             divrank: this._divrank,
             players: this._players,
+            divisionIndex: this._divisionIndex,
         }
     }
 }
