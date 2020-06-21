@@ -28,7 +28,7 @@
                 </v-list-item>
                 <v-list-item link :to="{name: 'TeamBuilder'}">
                     <v-list-item-action>
-                        <v-icon>mdi-account-switch</v-icon>
+                        <v-icon>mdi-account-hard-hat</v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
                         <v-list-item-title>TeamBuilder</v-list-item-title>
