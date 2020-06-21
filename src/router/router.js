@@ -9,9 +9,11 @@ import Teams from "@/components/Teams";
 import TeamBuilder from "@/components/TeamBuilder";
 import Multiselect from 'vue-multiselect'
 import Utils from "../api/Utils";
+import NewTeam from "../components/NewTeam";
 
 Vue.component('multiselect', Multiselect);
 Vue.use(Router);
+
 
 export default new Router({
     mode: 'history',
@@ -121,6 +123,30 @@ export default new Router({
                     next()
                 }
             }
-        }
+        },
+        {
+            path: '/add-team',
+            name: 'add-team',
+            component: NewTeam,
+            meta: {
+                title: 'Nikantes TC Tools',
+                page: 'Nieuw team',
+            },
+            beforeEnter: (to, from, next) => {
+                if (Utils.timeSinceLogin() > 30) {
+                    next({
+                        name: 'Login',
+                        query: {
+                            nextUrl: to.fullPath,
+                        },
+                        params: {
+                            msg: "Om een nieuw team aan te maken moet je ingelogd zijn. Vul een geldig wachtwoord in."
+                        }
+                    })
+                } else {
+                    next()
+                }
+            }
+        },
     ]
 })

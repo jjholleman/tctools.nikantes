@@ -77,5 +77,24 @@ export default {
             }).then(() => {
             })
         });
-    }
+    },
+    createTeam(team, id) {
+        ip.then(ip => {
+            logRef.add({
+                action: "CREATE",
+                source: {
+                    type: "document",
+                    collection: "teams",
+                    ref: id,
+                },
+                data: {
+                    new: team,
+                },
+                created_at: firebase.firestore.Timestamp.fromDate(new Date()),
+                userAgent: navigator.userAgent,
+                ip: ip,
+            }).then(() => {
+            })
+        });
+    },
 }
