@@ -96,7 +96,7 @@
                 checkDate: PlayerAPI.getCheckDate(),
                 nextCheckDate: PlayerAPI.getCheckDate(true),
                 showSeniors: false,
-                checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add("year", 1).format("YY"),
+                checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add(1, "year").format("YY"),
             };
         },
         mounted() {
