@@ -1,5 +1,10 @@
 <template>
     <v-container v-if="this.player">
+        <v-row no-gutters class="mb-8">
+            <v-col>
+                <v-btn x-small text link @click="$router.back()" color="primary"><v-icon left>mdi-arrow-left</v-icon>terug</v-btn>
+            </v-col>
+        </v-row>
         <v-text-field label="Voornaam" :value="this.player.firstname" v-model="player.firstname"></v-text-field>
         <v-text-field label="Tussenvoegsel" :value="this.player.middlename" v-model="player.middlename"></v-text-field>
         <v-text-field label="Achternaam" :value="this.player.lastname" v-model="player.lastname"></v-text-field>

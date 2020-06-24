@@ -1,5 +1,10 @@
 <template>
     <v-container>
+        <v-row no-gutters class="mb-8">
+            <v-col>
+                <v-btn x-small text link @click="$router.back()" color="primary"><v-icon left>mdi-arrow-left</v-icon>terug</v-btn>
+            </v-col>
+        </v-row>
         <v-alert
                 :value="alert"
                 type="warning"

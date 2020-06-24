@@ -1,5 +1,10 @@
 <template>
     <v-container>
+        <v-row no-gutters class="mb-8">
+            <v-col>
+                <v-btn x-small text link @click="$router.back()" color="primary"><v-icon left>mdi-arrow-left</v-icon>terug</v-btn>
+            </v-col>
+        </v-row>
         <v-form ref="form" v-model="valid" :lazy-validation="true">
             <v-text-field label="Voornaam" v-model="player.firstname" :rules="[rules.required]" required></v-text-field>
             <v-text-field label="Tussenvoegsel" v-model="player.middlename"></v-text-field>
