@@ -22,8 +22,8 @@
                           :label="checkDateLabel"/>
             </v-col>
         </v-row>
-        <v-row no-gutters>
-            <v-col cols="12" sm="6">
+        <v-row no-gutters class="flex-row">
+            <v-col cols="12" sm="8" order-sm="2" class="flex-grow-1">
                 <v-text-field
                         v-model="search"
                         append-icon="mdi-magnify"
@@ -32,10 +32,17 @@
                         hide-details
                 ></v-text-field>
             </v-col>
-            <v-col cols="12" sm="3" offset="1" offset-md="0.5" class="sort-controls">
-                <div>Sorteren</div>
-                <v-btn @click="sortMembersTable('firstname')" x-small outlined>Naam</v-btn>
-                <v-btn @click="sortMembersTable('knkv_age')" x-small outlined>Leeftijd (KNKV)</v-btn>
+            <v-col class="sort-controls mt-4 flex-shrink-1" align-self="center">
+                <v-btn @click="sortMembersTable('firstname')" x-small text>
+                    Naam
+                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='asc'">mdi-arrow-up</v-icon>
+                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='desc'">mdi-arrow-down</v-icon>
+                </v-btn>
+                <v-btn @click="sortMembersTable('knkv_age')" x-small text>
+                    Leeftijd (KNKV)
+                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='asc'">mdi-arrow-up</v-icon>
+                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='desc'">mdi-arrow-down</v-icon>
+                </v-btn>
             </v-col>
         </v-row>
         <v-row>
