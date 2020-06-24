@@ -42,9 +42,9 @@
             <v-toolbar-title>{{$route.meta.page || "TC Tools"}}</v-toolbar-title>
         </v-app-bar>
 
-        <v-content>
+        <v-main>
             <router-view></router-view>
-        </v-content>
+        </v-main>
         <v-footer app absolute color="indigo">
             <span class="white--text">&copy; 2020-{{moment().year()}} Jordi Holleman</span>
         </v-footer>
