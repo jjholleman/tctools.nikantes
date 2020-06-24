@@ -35,13 +35,13 @@
             <v-col class="sort-controls mt-4 flex-shrink-1" align-self="center">
                 <v-btn @click="sortMembersTable('firstname')" x-small text>
                     Naam
-                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='asc'">mdi-arrow-up</v-icon>
-                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='desc'">mdi-arrow-down</v-icon>
+                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='asc'" small>mdi-arrow-up</v-icon>
+                    <v-icon v-if="currentSort==='firstname' && currentSortDir==='desc'" small>mdi-arrow-down</v-icon>
                 </v-btn>
                 <v-btn @click="sortMembersTable('knkv_age')" x-small text>
                     Leeftijd (KNKV)
-                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='asc'">mdi-arrow-up</v-icon>
-                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='desc'">mdi-arrow-down</v-icon>
+                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='asc'" small>mdi-arrow-up</v-icon>
+                    <v-icon v-if="currentSort==='knkv_age' && currentSortDir==='desc'" small>mdi-arrow-down</v-icon>
                 </v-btn>
             </v-col>
         </v-row>
