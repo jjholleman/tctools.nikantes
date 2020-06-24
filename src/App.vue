@@ -45,7 +45,7 @@
         <v-content>
             <router-view></router-view>
         </v-content>
-        <v-footer app color="indigo">
+        <v-footer app absolute color="indigo">
             <span class="white--text">&copy; 2020-{{moment().year()}} Jordi Holleman</span>
         </v-footer>
     </v-app>
