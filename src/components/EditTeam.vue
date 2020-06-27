@@ -2,7 +2,10 @@
     <v-container v-if="this.team">
         <v-row no-gutters class="mb-8">
             <v-col>
-                <v-btn x-small text link @click="$router.back()" color="primary"><v-icon left>mdi-arrow-left</v-icon>terug</v-btn>
+                <v-btn x-small text link @click="$router.back()" color="primary">
+                    <v-icon left>mdi-arrow-left</v-icon>
+                    terug
+                </v-btn>
             </v-col>
         </v-row>
         <v-form ref="form" v-model="valid" :lazy-validation="true">
@@ -21,7 +24,21 @@
                           :rules="[rules.required]"
                           required></v-text-field>
             <v-row no-gutters class="mb-4" v-if="team.players">
-                Heren
+                <v-col cols="12" class="pa-0 ma-0">Heren</v-col>
+                <v-col class="my-4">
+                    <v-alert v-if="tooOldPlayers.male && tooOldPlayers.male.length > 0"
+                             type="error"
+                             dense
+                             class="mb-0"
+                             transition="scale-transition"
+                             prominent
+                    >
+                        <div>Maximale leeftijd {{team.division}}-teams: {{team.max_age}} jaar</div>
+                        <div v-for="(player, index) in tooOldPlayers.male" :key="index">
+                            - {{player.fullname}} ({{player.knkv_age}})
+                        </div>
+                    </v-alert>
+                </v-col>
                 <multiselect
                         v-if="team.players.males"
                         v-model="team.players.males"
@@ -32,10 +49,25 @@
                         :options="players"
                         :multiple="true"
                         :taggable="true"
+                        @input="onChange(team.players.males, 'male')"
                 ></multiselect>
             </v-row>
             <v-row no-gutters class="mb-4" v-if="team.players">
-                Dames
+                <v-col cols="12" class="pa-0 ma-0">Dames</v-col>
+                <v-col class="my-4">
+                    <v-alert v-if="tooOldPlayers.female && tooOldPlayers.female.length > 0"
+                             type="error"
+                             dense
+                             class="mb-0"
+                             transition="scale-transition"
+                             prominent
+                    >
+                        <div>Maximale leeftijd {{team.division}}-teams: {{team.max_age}} jaar</div>
+                        <div v-for="(player, index) in tooOldPlayers.female" :key="index">
+                            - {{player.fullname}} ({{player.knkv_age}})
+                        </div>
+                    </v-alert>
+                </v-col>
                 <multiselect
                         v-if="team.players.females"
                         v-model="team.players.females"
@@ -46,6 +78,7 @@
                         :options="players"
                         :multiple="true"
                         :taggable="true"
+                        @input="onChange(team.players.females, 'female')"
                 ></multiselect>
             </v-row>
 
@@ -84,6 +117,7 @@
                 valid: true,
                 divisions: DivisionAPI.getAllDivisions(),
                 players: [],
+                tooOldPlayers: {},
             }
         },
         firestore() {
@@ -92,6 +126,7 @@
                     ref: db.collection('teams').doc(this.$route.params.id),
                     resolve: (data) => {
                         this.team = data;
+                        this.team.max_age = DivisionAPI.getDivisionMaxAge(this.team.division);
                         if (this.team) {
                             this.original_team = JSON.parse(JSON.stringify(this.team))
                         }
@@ -121,6 +156,15 @@
             },
             customLabel({fullname, knkv_age}) {
                 return `${fullname} (${knkv_age})`
+            },
+            onChange(players, gender) {
+                let tooOldPlayers = [];
+                players.forEach(player => {
+                    if (player.knkv_age > this.team.max_age) {
+                        tooOldPlayers.push(player)
+                    }
+                });
+                this.tooOldPlayers[gender] = tooOldPlayers;
             }
         },
         filters: {
