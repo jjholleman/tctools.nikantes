@@ -7,6 +7,13 @@
                     terug
                 </v-btn>
             </v-col>
+            <v-switch v-model="toggle_checkdate_btn"
+                      hide-details
+                      inset
+                      dense
+                      class="d-inline-flex mt-1 mt-sm-1 pa-2"
+                      @change="toggleCheckDate(toggle_checkdate_btn)"
+                      :label="checkDateLabel"/>
         </v-row>
         <v-form ref="form" v-model="valid" :lazy-validation="true">
             <v-select
@@ -82,6 +89,19 @@
                 ></multiselect>
             </v-row>
 
+            <v-alert
+                    v-if="(this.division.avg_age_limits) && (teamAvgAge < this.division.avg_age_limits.min || teamAvgAge > this.division.avg_age_limits.max)"
+                    type="error"
+                    color="purple"
+                    dense
+                    transition="scale-transition"
+                    prominent
+            >
+                <div>Gemiddelde leeftijd {{team.division}}-teams tussen:
+                    {{division.avg_age_limits.min}}-{{division.avg_age_limits.max}} jaar
+                </div>
+                <div> - Huidige opstelling: {{teamAvgAge.toFixed(1)}} jaar</div>
+            </v-alert>
 
             <v-btn @click="updateTeam()" color="primary">
                 <v-icon left>mdi-reload</v-icon>
@@ -118,6 +138,9 @@
                 divisions: DivisionAPI.getAllDivisions(),
                 players: [],
                 tooOldPlayers: {},
+                division: {},
+                toggle_checkdate_btn: false,
+                checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add(1, "year").format("YY"),
             }
         },
         firestore() {
@@ -126,12 +149,38 @@
                     ref: db.collection('teams').doc(this.$route.params.id),
                     resolve: (data) => {
                         this.team = data;
+                        data.players.males.forEach((player, index) => {
+                            player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate());
+                            this.team.players.males[index] = player;
+                        });
+                        data.players.females.forEach((player, index) => {
+                            player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate());
+                            this.team.players.females[index] = player;
+                        });
                         this.team.max_age = DivisionAPI.getDivisionMaxAge(this.team.division);
+                        this.division.max_age_limit = this.team.max_age;
+                        this.division.avg_age_limits = DivisionAPI.getDivisionAgeLimit(this.team.division);
                         if (this.team) {
                             this.original_team = JSON.parse(JSON.stringify(this.team))
                         }
                     }
                 }
+            }
+        },
+        computed: {
+            teamAvgAge: function () {
+                let ages = [];
+                let avgAge = false;
+                if (Object.keys(this.team).length !== 0 && this.team.constructor === Object) {
+                    this.team.players.males.forEach(player => {
+                        ages.push(player.knkv_age)
+                    });
+                    this.team.players.females.forEach(player => {
+                        ages.push(player.knkv_age)
+                    });
+                    avgAge = ages.reduce((a, b) => a + b, 0) / ages.length;
+                }
+                return avgAge;
             }
         },
         mounted() {
@@ -165,13 +214,23 @@
                     }
                 });
                 this.tooOldPlayers[gender] = tooOldPlayers;
-            }
+            },
+            toggleCheckDate(next) {
+                this.team.players.males.forEach((player, index) => {
+                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+                    this.team.players.males[index] = player;
+                });
+                this.team.players.females.forEach((player, index) => {
+                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+                    this.team.players.females[index] = player;
+                });
+            },
         },
         filters: {
             moment: function (date, format) {
                 return moment(date).format(format)
             }
-        }
+        },
     }
 </script>
 
