@@ -45,5 +45,9 @@ export default {
     ],
     getAllDivisions() {
         return this.divisions;
+    },
+    getDivisionMaxAge(divisionLetter) {
+        let division = this.divisions.find(division => {return division.name === divisionLetter});
+        return division.max_age;
     }
 }
