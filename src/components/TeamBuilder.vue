@@ -56,7 +56,7 @@
                     :options="players"
                     :multiple="true"
                     :taggable="true"
-                    @input="onChange(team.players.males, 'male')"
+                    @input="updateTooOldPlayers(team.players.males, 'male')"
             ></multiselect>
         </v-row>
         <v-row no-gutters class="mb-4" v-if="team.players">
@@ -85,7 +85,7 @@
                     :options="players"
                     :multiple="true"
                     :taggable="true"
-                    @input="onChange(team.players.females, 'female')"
+                    @input="updateTooOldPlayers(team.players.females, 'female')"
             ></multiselect>
         </v-row>
     </v-container>
@@ -146,7 +146,7 @@
             customLabel({fullname, knkv_age}) {
                 return `${fullname} (${knkv_age})`
             },
-            onChange(players, gender) {
+            updateTooOldPlayers(players, gender) {
                 let tooOldPlayers = [];
                 players.forEach(player => {
                     if (player.knkv_age > this.team.max_age) {
@@ -173,6 +173,8 @@
                 this.team.max_age = DivisionAPI.getDivisionMaxAge(division);
                 this.division.max_age_limit = this.team.max_age;
                 this.division.avg_age_limits = DivisionAPI.getDivisionAgeLimit(division);
+                this.updateTooOldPlayers(this.team.players.males, 'male');
+                this.updateTooOldPlayers(this.team.players.females, 'female');
             }
         },
         filters: {

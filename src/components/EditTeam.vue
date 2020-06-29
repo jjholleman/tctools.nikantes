@@ -23,6 +23,7 @@
                     required
                     :items="divisions"
                     item-text="name"
+                    @change="updateDivision"
             ></v-select>
             <v-text-field type="number"
                           min="1"
@@ -58,7 +59,7 @@
                         :options="players"
                         :multiple="true"
                         :taggable="true"
-                        @input="onChange(team.players.males, 'male')"
+                        @input="updateTooOldPlayers(team.players.males, 'male')"
                 ></multiselect>
             </v-row>
             <v-row no-gutters class="mb-4" v-if="team.players">
@@ -89,7 +90,7 @@
                         :options="players"
                         :multiple="true"
                         :taggable="true"
-                        @input="onChange(team.players.females, 'female')"
+                        @input="updateTooOldPlayers(team.players.females, 'female')"
                 ></multiselect>
             </v-row>
 
@@ -246,7 +247,7 @@
             customLabel({fullname, knkv_age}) {
                 return `${fullname} (${knkv_age})`
             },
-            onChange(players, gender) {
+            updateTooOldPlayers(players, gender) {
                 let tooOldPlayers = [];
                 players.forEach(player => {
                     if (player.knkv_age > this.team.max_age) {
@@ -286,6 +287,13 @@
             deleteFromStaff(value) {
                 this.staff = this.staff.filter(a => a !== value);
                 this.team.staff = this.staff;
+            },
+            updateDivision(value) {
+                this.team.max_age = DivisionAPI.getDivisionMaxAge(value);
+                this.division.max_age_limit = this.team.max_age;
+                this.division.avg_age_limits = DivisionAPI.getDivisionAgeLimit(value);
+                this.updateTooOldPlayers(this.team.players.males, 'male');
+                this.updateTooOldPlayers(this.team.players.females, 'female');
             }
         },
         filters: {
