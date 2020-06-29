@@ -164,6 +164,10 @@
                     player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
                     this.team.players.females[index] = player;
                 });
+                this.players.forEach((player, index) => {
+                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+                    this.players[index] = player;
+                });
             },
             setAgeLimits(division) {
                 this.team.max_age = DivisionAPI.getDivisionMaxAge(division);

@@ -264,6 +264,10 @@
                     player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
                     this.team.players.females[index] = player;
                 });
+                this.players.forEach((player, index) => {
+                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+                    this.players[index] = player;
+                });
             },
             addStaff() {
                 let value = this.staffInput;
