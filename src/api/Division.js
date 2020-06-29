@@ -70,7 +70,28 @@ export default {
             max_age: 8,
             min_age: 0,
             indexId: 1,
-        }
+        },
+        {
+            name: "G",
+            avg_age: {
+                min: 5,
+                max: 999,
+            },
+            max_age: 999,
+            min_age: 0,
+            indexId: 0.5,
+        },
+        {
+            name: "K",
+            avg_age: {
+                min: 3,
+                max: 6,
+            },
+            max_age: 6,
+            min_age: 3,
+            indexId: 0.4,
+        },
+
     ],
     getAllDivisions() {
         return this.divisions;
