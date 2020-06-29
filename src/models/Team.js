@@ -5,6 +5,7 @@ export class Team {
         this._division = data.division;
         this._divrank = data.divrank;
         this._players = data.players || {males: [], females: []};
+        this._staff = data.staff || [];
         this._divisionIndex = "";
         this.setDivisionIndex()
     }
@@ -16,6 +17,14 @@ export class Team {
                 this._divisionIndex = division.indexId - (this._divrank / 100);
             }
         });
+    }
+
+    get staff() {
+        return this._staff;
+    }
+
+    set staff(value) {
+        this._staff = value;
     }
 
     get divrank() {
@@ -52,6 +61,7 @@ export class Team {
             divrank: this._divrank,
             players: this._players,
             divisionIndex: this._divisionIndex,
+            staff: this._staff,
         }
     }
 }

@@ -26,6 +26,14 @@
                                     Bewerken
                                 </v-btn>
                             </v-col>
+                            <v-col cols="12" v-if="team.staff && team.staff.length > 0">
+                                <v-subheader light>STAFF</v-subheader>
+                                <v-list v-if="team.staff.length > 0">
+                                    <v-list-item v-for="(person, index) in team.staff" :key="index">
+                                        {{person}}
+                                    </v-list-item>
+                                </v-list>
+                            </v-col>
                             <v-col cols="4" class="flex-shrink-1 flex-grow-0">
                                 <v-subheader light>HEREN</v-subheader>
                                 <v-list v-if="team.players.males.length > 0">
@@ -72,6 +80,14 @@
                         <v-icon x-small left>mdi-pencil</v-icon>
                         Bewerken
                     </v-btn>
+                </v-col>
+                <v-col cols="12" v-if="selected.staff && selected.staff.length > 0">
+                    <v-subheader light>STAFF</v-subheader>
+                    <v-list v-if="selected.staff.length > 0">
+                        <v-list-item v-for="(person, index) in selected.staff" :key="index">
+                            {{person}}
+                        </v-list-item>
+                    </v-list>
                 </v-col>
                 <v-col cols="6" class="flex-shrink-1 flex-grow-0 col-sm-auto flex-sm-shrink-1">
                     <v-subheader light>HEREN</v-subheader>
