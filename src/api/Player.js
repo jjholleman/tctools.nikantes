@@ -45,7 +45,7 @@ export default {
             if (
                 player.knkv_age <= division.max_age &&
                 player.knkv_age >= division.min_age &&
-                (division.name !== "G" || division.name !== "K")
+                (division.name !== "G" && division.name !== "K")
             ) {
                 player.limit_team = division.name;
             }
