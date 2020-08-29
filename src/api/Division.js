@@ -10,6 +10,7 @@ export default {
             max_age: 9999,
             min_age: 19,
             indexId: 7,
+            teamSize: 8,
         },
         {
             name: "A",
@@ -20,6 +21,7 @@ export default {
             max_age: 19,
             min_age: 16,
             indexId: 6,
+            teamSize: 8,
         },
         {
             name: "B",
@@ -30,6 +32,7 @@ export default {
             max_age: 16,
             min_age: 14,
             indexId: 5,
+            teamSize: 8,
         },
         {
             name: "C",
@@ -40,6 +43,7 @@ export default {
             max_age: 14,
             min_age: 12,
             indexId: 4,
+            teamSize: 8,
         },
         {
             name: "D",
@@ -50,6 +54,7 @@ export default {
             max_age: 12,
             min_age: 10,
             indexId: 3,
+            teamSize: 8,
         },
         {
             name: "E",
@@ -60,6 +65,7 @@ export default {
             max_age: 10,
             min_age: 8,
             indexId: 2,
+            teamSize: 4,
         },
         {
             name: "F",
@@ -70,6 +76,7 @@ export default {
             max_age: 8,
             min_age: 0,
             indexId: 1,
+            teamSize: 4,
         },
         {
             name: "G",
@@ -80,6 +87,7 @@ export default {
             max_age: 999,
             min_age: 0,
             indexId: 0.5,
+            teamSize: 8,
         },
         {
             name: "K",
@@ -90,6 +98,7 @@ export default {
             max_age: 6,
             min_age: 3,
             indexId: 0.4,
+            teamSize: 4,
         },
 
     ],
@@ -106,5 +115,9 @@ export default {
     getDivisionAgeLimit(divisionLetter) {
         let division = this.divisions.find(division => this.findDivisionByLetter(division, divisionLetter));
         return division.avg_age;
+    },
+    getDivisionTeamSize(divisionLetter) {
+        let division = this.divisions.find(division => this.findDivisionByLetter(division, divisionLetter));
+        return division.teamSize;
     }
 }
