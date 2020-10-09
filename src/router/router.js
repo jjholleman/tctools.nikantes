@@ -11,6 +11,7 @@ import Multiselect from 'vue-multiselect'
 import Utils from "../api/Utils";
 import NewTeam from "../components/NewTeam";
 import EditTeam from "../components/EditTeam";
+import ShowPlayer from "../components/ShowPlayer";
 
 Vue.component('multiselect', Multiselect);
 Vue.use(Router);
@@ -69,12 +70,35 @@ export default new Router({
             }
         },
         {
-            path: '/player/:id',
-            name: 'player',
+            path: '/player/:id/edit',
+            name: 'EditPlayer',
             component: EditPlayer,
             meta: {
                 title: 'Nikantes TC Tools',
                 page: 'Speler bewerken',
+            },
+            beforeEnter: (to, from, next) => {
+                if (Utils.timeSinceLogin() > 30) {
+                    next({
+                        name: 'Login',
+                        query: {
+                            nextUrl: to.fullPath
+                        },
+                        params: {
+                            msg: "Om een speler te bewerken moet je ingelogd zijn. Vul een geldig wachtwoord in."
+                        }
+                    })
+                } else {
+                    next()
+                }
+            }
+        },
+        {
+            path: '/player/:id',
+            name: 'player',
+            component: ShowPlayer,
+            meta: {
+                title: 'Nikantes TC Tools',
             },
             beforeEnter: (to, from, next) => {
                 if (Utils.timeSinceLogin() > 30) {

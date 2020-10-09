@@ -37,7 +37,7 @@
                             <v-col cols="4" class="flex-shrink-1 flex-grow-0">
                                 <v-subheader light>HEREN</v-subheader>
                                 <v-list v-if="team.players.males.length > 0">
-                                    <v-list-item v-for="(player, index) in team.players.males" :key="index">
+                                    <v-list-item v-for="(player, index) in team.players.males" :key="index" link :to="{name: 'player', params: {id: player.id}}">
                                         {{player.fullname}}
                                     </v-list-item>
                                 </v-list>
@@ -48,7 +48,7 @@
                             <v-col>
                                 <v-subheader>DAMES</v-subheader>
                                 <v-list v-if="team.players.females.length > 0">
-                                    <v-list-item v-for="(player, index) in team.players.females" :key="index">
+                                    <v-list-item v-for="(player, index) in team.players.females" :key="index" link :to="{name: 'player', params: {id: player.id}}">
                                         {{player.fullname}}
                                     </v-list-item>
                                 </v-list>
