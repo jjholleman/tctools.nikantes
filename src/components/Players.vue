@@ -66,7 +66,7 @@
                                 </v-list>
                                 <v-row class="text-center">
                                     <v-col>
-                                        <v-btn link :to="{path: '/player/'+player.id}">
+                                        <v-btn link :to="{name: 'EditPlayer', params: {id: player.id}}">
                                             <v-icon left>mdi-pencil</v-icon>
                                             BEWERKEN
                                         </v-btn>
