@@ -204,7 +204,7 @@
                 });
                 if (players.length >= 4) {
                     this.teamCombinations = [];
-                    if (this.team.division === "D" && (players.length >= 4 || players.length < 8)) { // D 4Korfbal exception.
+                    if (this.team.division === "D" && (players.length >= 4 && players.length < 8)) { // D 4Korfbal exception.
                         this.teamCombinationsSize = 4;
                     } else {
                         this.teamCombinationsSize = this.division.teamSize;
