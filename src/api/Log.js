@@ -2,7 +2,7 @@ import {db} from './../firebase'
 import * as firebase from "firebase/app";
 
 let logRef = db.collection('logs');
-let ip = fetch('https://api6.ipify.org?format=json')
+let ip = fetch('https://api.ipify.org?format=json')
     .then(x => x.json())
     .then(({ip}) => {
         return ip;
