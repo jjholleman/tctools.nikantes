@@ -37,8 +37,8 @@ export default {
     getPlayerKNKVAge(player, checkDate) {
         // Get the persons age and age on the checkDate
         let date_of_birth = moment(player.date_of_birth.toDate());
-        player.age = moment().diff(date_of_birth, "years");
-        player.knkv_age = moment(checkDate).diff(date_of_birth, 'years');
+        player.age = moment().diff(date_of_birth, "years", true);
+        player.knkv_age = moment(checkDate).diff(date_of_birth, 'years', true);
 
         // Calculate the lowest accepted team the person can play in, based on the divisions data
         DivisionAPI.getAllDivisions().forEach(function (division) {
