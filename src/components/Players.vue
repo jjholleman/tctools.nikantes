@@ -53,7 +53,7 @@
                                 :key="index"
                                 class="player"
                                 v-for="(player, index) in sortedList"
-                                v-if="showSeniors || player.knkv_age <= 19"
+                                v-if="showSeniors || Math.floor(player.knkv_age) <= 19"
                         >
                             <v-expansion-panel-header>{{player.fullname}} ({{Math.floor(player.knkv_age)}})
                             </v-expansion-panel-header>

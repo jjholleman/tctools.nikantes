@@ -43,8 +43,8 @@ export default {
         // Calculate the lowest accepted team the person can play in, based on the divisions data
         DivisionAPI.getAllDivisions().forEach(function (division) {
             if (
-                player.knkv_age <= division.max_age &&
-                player.knkv_age >= division.min_age &&
+                Math.floor(player.knkv_age) <= division.max_age &&
+                Math.floor(player.knkv_age) >= division.min_age &&
                 (division.name !== "G" && division.name !== "K")
             ) {
                 player.limit_team = division.name;
