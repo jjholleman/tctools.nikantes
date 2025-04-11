@@ -31,19 +31,7 @@
                   {{ TeamAPI.getAgeData(team.players).max.toFixed(1) }}]
                 </div>
                 <div>
-                  Spelbepalingen: <span :class="[
-                    `${{
-                      Rood: 'red',
-                      Oranje: 'orange',
-                      Geel: 'yellow',
-                      Blauw: 'blue',
-                      Groen: 'green',
-                      'Onbekend/Geen': 'grey'
-                    }[team.ruleColor] || 'grey'}--text`,
-                    'font-weight-bold'
-                  ]">
-                  {{ team.ruleColor }}
-                </span>
+                  Spelbepalingen: <RuleColorLabel :ruleColor="team.ruleColor" />
                 </div>
               </v-col>
               <v-col cols="12" v-if="team.staff && team.staff.length > 0">
@@ -143,15 +131,18 @@
 
 import {db} from "./../firebase";
 import TeamAPI from "../api/Teams";
+import RuleColorLabel from "@/components/partials/RuleColorLabel.vue";
 
 export default {
   name: "Teams",
+  components: {RuleColorLabel},
   data() {
     return {
       teams: [],
       tab: null,
       selected: undefined,
       TeamAPI: TeamAPI,
+      ruleColors: TeamAPI.getRuleColors(),
     };
   },
   firestore() {

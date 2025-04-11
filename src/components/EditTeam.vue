@@ -22,13 +22,13 @@
                     :rules="[rules.required]"
                     required
       ></v-text-field>
-      <v-select
-          label="Kleur spelbepaling"
-          v-model="team.ruleColor"
-          :rules="[rules.required]"
-          required
-          :items="ruleColors"
-          item-text="Kleur"
+      <v-select label="Kleur spelbepaling"
+                v-model="team.ruleColor"
+                :rules="[rules.required]"
+                :items="colorOptions"
+                item-text="name"
+                item-value="value"
+                required
       ></v-select>
 
       <v-row no-gutters class="mb-4" v-if="team.players">
@@ -49,7 +49,9 @@
       </v-row>
 
       <v-alert
-          v-if="(team.players && team.players.length == 4 && teamAgeData.bandwidth > 2) || teamAgeData.bandwidth > 3"
+          v-if="
+          (team.ruleColor && ['blue', 'green'].includes(team.ruleColor) && teamAgeData.bandwidth > 2)
+          || teamAgeData.bandwidth > 3"
           color="red"
           dense
           prominent
@@ -57,8 +59,26 @@
           type="error"
       >
         <div class="font-weight-bold">
-          Bandbreedte: {{Math.round(Number(teamAgeData.bandwidth)*100)/100}} jaar  [{{teamAgeData.min.toFixed(1)}} ~ {{teamAgeData.max.toFixed(1)}}]
+          Bandbreedte: {{ Math.round(Number(teamAgeData.bandwidth) * 100) / 100 }} jaar
+          [{{ teamAgeData.min.toFixed(1) }} ~ {{ teamAgeData.max.toFixed(1) }}]
         </div>
+        <div v-if="team.ruleColor && ['blue', 'green'].includes(team.ruleColor)">
+          De maximale bandbreedte bij 4-tallen (blauw en groen) is 2 jaar.
+        </div>
+      </v-alert>
+
+      <v-alert
+          v-if="team.ruleColor
+          && ['red', 'orange', 'yellow'].includes(team.ruleColor)
+          && teamAgeData.average < 9"
+          color="black"
+          dense
+          prominent
+          transition="scale-transition"
+          type="error"
+      >
+        <div class="font-weight-bold">Pas vanaf een gemiddelde leeftijd van 9,0 jaar mag een 8-tal worden gevormd</div>
+        <div>Huidige gemiddelde leeftijd van het team: {{teamAgeData.average.toFixed(1)}}</div>
       </v-alert>
 
       <v-row>
@@ -126,7 +146,7 @@ export default {
         required: value => !!value || 'Verplicht.',
       },
       valid: true,
-      ruleColors: ["Rood", "Oranje", "Geel", "Groen", "Blauw", "Onbekend/Geen"],
+      ruleColors: TeamAPI.getRuleColors(),
       players: [],
       staffInput: "",
       staff: [],
@@ -166,7 +186,13 @@ export default {
       }
 
       return data
-    }
+    },
+    colorOptions() {
+      return Object.entries(this.ruleColors).map(([key, value]) => ({
+        value: key,
+        name: value.name,
+      }));
+    },
   },
   mounted() {
     this.players = PlayerAPI.getAll();

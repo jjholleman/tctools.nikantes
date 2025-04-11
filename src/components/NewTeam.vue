@@ -32,7 +32,9 @@
             <v-select label="Kleur spelbepaling"
                       v-model="team.ruleColor"
                       :rules="[rules.required]"
-                      :items="ruleColors"
+                      :items="colorOptions"
+                      item-text="name"
+                      item-value="value"
                       required
             ></v-select>
             <v-btn @click="addTeam()" color="primary" :disabled="!valid">
@@ -49,6 +51,7 @@
     import {db} from './../firebase'
     import {Team} from "../models/Team";
     import LogAPI from "../api/Log";
+    import TeamAPI from "../api/Teams";
 
     export default {
         name: "NewTeam",
@@ -59,7 +62,7 @@
                     required: value => !!value || 'Verplicht.',
                 },
                 valid: true,
-                ruleColors: ["Rood", "Oranje", "Geel", "Groen", "Blauw", "Onbekend/Geen"],
+                ruleColors: TeamAPI.getRuleColors(),
                 alert: false,
                 alert_team_id: undefined,
                 alert_team_name: undefined,
@@ -108,7 +111,15 @@
                     console.log(e)
                 }
             }
-        }
+        },
+      computed: {
+        colorOptions() {
+          return Object.entries(this.ruleColors).map(([key, value]) => ({
+            value: key,
+            name: value.name,
+          }));
+        },
+      }
     }
 </script>
 
