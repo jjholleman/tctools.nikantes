@@ -86,19 +86,7 @@
             {{ TeamAPI.getAgeData(selected.players).max.toFixed(1) }}]
           </div>
           <div>
-            Spelbepalingen: <span :class="[
-                    `${{
-                      Rood: 'red',
-                      Oranje: 'orange',
-                      Geel: 'yellow',
-                      Blauw: 'blue',
-                      Groen: 'green',
-                      'Onbekend/Geen': 'grey'
-                    }[selected.ruleColor] || 'grey'}--text`,
-                    'font-weight-bold'
-                  ]">
-                  {{ selected.ruleColor }}
-                </span>
+            Spelbepalingen: <RuleColorLabel :ruleColor="selected.ruleColor"/>
           </div>
         </v-col>
         <v-col cols="12" v-if="selected.staff && selected.staff.length > 0">
