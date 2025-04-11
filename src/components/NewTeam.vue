@@ -23,20 +23,18 @@
             </v-row>
         </v-alert>
         <v-form ref="form" v-model="valid" :lazy-validation="true">
-            <v-select
-                    label="Teamletter"
-                    v-model="team.division"
-                    :rules="[rules.required]"
-                    required
-                    :items="divisions"
-                    item-text="name"
-            ></v-select>
-            <v-text-field type="number"
-                          min="1"
-                          label="Teamnummer"
-                          v-model="team.divrank"
+            <v-text-field type="text"
+                          label="Teamnaam"
+                          v-model="team.name"
                           :rules="[rules.required]"
-                          required></v-text-field>
+                          required
+            ></v-text-field>
+            <v-select label="Kleur spelbepaling"
+                      v-model="team.ruleColor"
+                      :rules="[rules.required]"
+                      :items="ruleColors"
+                      required
+            ></v-select>
             <v-btn @click="addTeam()" color="primary" :disabled="!valid">
                 <v-icon left>mdi-account-plus</v-icon>
                 TOEVOEGEN
@@ -50,7 +48,6 @@
 
     import {db} from './../firebase'
     import {Team} from "../models/Team";
-    import DivisionAPI from "../api/Division";
     import LogAPI from "../api/Log";
 
     export default {
@@ -62,7 +59,7 @@
                     required: value => !!value || 'Verplicht.',
                 },
                 valid: true,
-                divisions: DivisionAPI.getAllDivisions(),
+                ruleColors: ["Rood", "Oranje", "Geel", "Groen", "Blauw", "Onbekend/Geen"],
                 alert: false,
                 alert_team_id: undefined,
                 alert_team_name: undefined,

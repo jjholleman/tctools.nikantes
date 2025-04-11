@@ -26,7 +26,7 @@
                         <v-list-item-title>Teams</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
-                <v-list-item link :to="{name: 'TeamBuilder'}">
+                <v-list-item link disabled :to="{name: 'TeamBuilder'}">
                     <v-list-item-action>
                         <v-icon>mdi-account-hard-hat</v-icon>
                     </v-list-item-action>

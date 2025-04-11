@@ -1,22 +1,25 @@
-import DivisionAPI from "../api/Division";
-
 export class Team {
     constructor(data) {
-        this._division = data.division;
-        this._divrank = data.divrank;
-        this._players = data.players || {males: [], females: []};
+        this._name = data.name;
+        this._ruleColor = data.ruleColor || null;
+        this._players = data.players || [];
         this._staff = data.staff || [];
-        this._divisionIndex = "";
-        this.setDivisionIndex()
     }
 
-    setDivisionIndex() {
-        const divisions = DivisionAPI.getAllDivisions();
-        divisions.forEach(division => {
-            if (division.name === this._division) {
-                this._divisionIndex = division.indexId - (this._divrank / 100);
-            }
-        });
+    get name() {
+        return this._name;
+    }
+
+    set name(value) {
+        this._name = value;
+    }
+
+    get ruleColor() {
+        return this._ruleColor;
+    }
+
+    set ruleColor(value) {
+        this._ruleColor = value;
     }
 
     get staff() {
@@ -25,22 +28,6 @@ export class Team {
 
     set staff(value) {
         this._staff = value;
-    }
-
-    get divrank() {
-        return this._divrank;
-    }
-
-    set divrank(rank) {
-        this._divrank = rank;
-    }
-
-    get division() {
-        return this._division;
-    }
-
-    set division(division) {
-        this._division = division;
     }
 
     get players() {
@@ -57,10 +44,9 @@ export class Team {
 
     toJSON() {
         return {
-            division: this._division,
-            divrank: this._divrank,
+            name: this._name,
+            ruleColor: this._ruleColor,
             players: this._players,
-            divisionIndex: this._divisionIndex,
             staff: this._staff,
         }
     }

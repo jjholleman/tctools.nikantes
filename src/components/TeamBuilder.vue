@@ -110,7 +110,7 @@
 
     import PlayerAPI from "../api/Player";
     import moment from 'moment'
-    import DivisionAPI from "../api/Division";
+    import DivisionAPI from "../api/Teams";
 
     export default {
         name: "TeamBuilder",
