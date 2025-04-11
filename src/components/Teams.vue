@@ -91,6 +91,28 @@
             Bewerken
           </v-btn>
         </v-col>
+        <v-col cols="12">
+          <div>Gemiddelde: {{ TeamAPI.getAgeData(selected.players).average.toFixed(1) }} jaar</div>
+          <div>Bandbreedte: {{ Math.round(Number(TeamAPI.getAgeData(selected.players).bandwidth) * 100) / 100 }} jaar
+            [{{ TeamAPI.getAgeData(selected.players).min.toFixed(1) }} ~
+            {{ TeamAPI.getAgeData(selected.players).max.toFixed(1) }}]
+          </div>
+          <div>
+            Spelbepalingen: <span :class="[
+                    `${{
+                      Rood: 'red',
+                      Oranje: 'orange',
+                      Geel: 'yellow',
+                      Blauw: 'blue',
+                      Groen: 'green',
+                      'Onbekend/Geen': 'grey'
+                    }[selected.ruleColor] || 'grey'}--text`,
+                    'font-weight-bold'
+                  ]">
+                  {{ selected.ruleColor }}
+                </span>
+          </div>
+        </v-col>
         <v-col cols="12" v-if="selected.staff && selected.staff.length > 0">
           <v-subheader light>STAFF</v-subheader>
           <v-list v-if="selected.staff.length > 0">
@@ -99,11 +121,12 @@
             </v-list-item>
           </v-list>
         </v-col>
-        <v-col cols="6" class="flex-shrink-1 flex-grow-0 col-sm-auto flex-sm-shrink-1">
-          <v-subheader light>HEREN</v-subheader>
+        <v-col cols="12" class="flex-shrink-1 flex-grow-0 col-sm-auto flex-sm-shrink-1">
+          <v-subheader light>SPELERS</v-subheader>
           <v-list v-if="selected.players.length > 0">
-            <v-list-item v-for="(player, index) in selected.players" :key="index">
-              {{ player.fullname }}
+            <v-list-item v-for="(player, index) in selected.players" :key="index" link
+                         :to="{name: 'player', params: {id: player.id}}">
+              {{ player.fullname }} ({{ Number(player.knkv_age).toFixed(1) }})
             </v-list-item>
           </v-list>
           <v-list-item v-else>
