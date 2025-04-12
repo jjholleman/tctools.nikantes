@@ -55,13 +55,13 @@
                 v-for="(player, index) in sortedList"
                 v-if="showSeniors || Math.floor(player.knkv_age) <= 19"
             >
-              <v-expansion-panel-header>{{ player.fullname }} ({{ Math.floor(player.knkv_age) }})
+              <v-expansion-panel-header>{{ player.fullname }} ({{ Number(player.knkv_age).toFixed(1) }})
               </v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-list>
                   <v-list-item>Geboortedatum: {{ player.date_of_birth.toDate() | moment }}</v-list-item>
-                  <v-list-item>Leeftijd: {{ Math.floor(player.age) }}</v-list-item>
-                  <v-list-item>Leeftijd op peildatum: {{ Math.floor(player.knkv_age) }}</v-list-item>
+                  <v-list-item>Leeftijd: {{ Number(player.age).toFixed(1) }}</v-list-item>
+                  <v-list-item>Leeftijd op peildatum: {{ Number(player.knkv_age).toFixed(1) }}</v-list-item>
                 </v-list>
                 <v-row class="text-center">
                   <v-col>
