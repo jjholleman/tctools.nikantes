@@ -200,6 +200,14 @@ export default {
   methods: {
     updateTeam() {
       if (JSON.stringify(this.team) !== JSON.stringify(this.original_team)) {
+        const currentCheckDate = PlayerAPI.getCheckDate(false); // Always get current season
+
+        // Recalculate player KNKV age using the current season checkDate
+        this.team.players.forEach((player, index) => {
+          player = PlayerAPI.getPlayerKNKVAge(player, currentCheckDate);
+          this.team.players[index] = player;
+        });
+
         let team = new Team(this.team).toJSON();
         this.$firestore.teamRef.update({...team});
         LogAPI.updateTeam(this.original_team, this.team);

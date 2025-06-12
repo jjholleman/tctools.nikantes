@@ -64,6 +64,18 @@ export default new Router({
             path: '/teambuilder',
             name: 'TeamBuilder',
             component: TeamBuilder,
+            props: route => {
+                let base_team = null;
+                if (route.query.base_team) {
+                    try {
+                        base_team = JSON.parse(route.query.base_team);
+                    } catch (e) {
+                        // eslint-disable-next-line no-console
+                        console.error('Invalid user data:', e);
+                    }
+                }
+                return { base_team };
+            },
             meta: {
                 title: 'Nikantes TC Tools',
                 page: 'TeamBuilder',

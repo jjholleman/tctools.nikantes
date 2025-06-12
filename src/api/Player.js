@@ -35,7 +35,18 @@ export default {
     },
     getPlayerKNKVAge(player, checkDate) {
         // Get the persons age and age on the checkDate
-        let date_of_birth = moment(player.date_of_birth.toDate());
+        let dobRaw = player.date_of_birth;
+        let date_of_birth;
+
+        if (dobRaw && typeof dobRaw.toDate === 'function') {
+            date_of_birth = moment(dobRaw.toDate());
+        } else if (dobRaw && dobRaw.seconds) {
+            date_of_birth = moment(new Date(dobRaw.seconds * 1000));
+        } else {
+            console.warn('Invalid date_of_birth:', dobRaw);
+            return player;
+        }
+
         player.age = moment().diff(date_of_birth, "years", true);
         player.knkv_age = moment(checkDate).diff(date_of_birth, 'years', true);
         return player;

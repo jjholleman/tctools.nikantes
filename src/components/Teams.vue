@@ -19,21 +19,45 @@
           <v-tab-item v-for="(team, index) in teams" :key="index">
             <v-row class="pl-2">
               <v-col cols="12">
-                <v-btn text x-small link :to="{path: '/team/'+team['.key']}">
-                  <v-icon x-small left>mdi-pencil</v-icon>
+                <v-btn color="primary" outlined small class="mr-2" @click="editInTeamBuilder(team)">
+                  <v-icon small left>mdi-account-hard-hat</v-icon>
+                  Gebruik in Teambuilder
+                </v-btn>
+                <v-btn outlined text small link :to="{path: '/team/'+team['.key']}">
+                  <v-icon small left>mdi-pencil</v-icon>
                   Bewerken
                 </v-btn>
               </v-col>
+
               <v-col cols="12">
-                <div>Gemiddelde: {{ TeamAPI.getAgeData(team.players).average.toFixed(1) }} jaar</div>
-                <div>Bandbreedte: {{ Math.round(Number(TeamAPI.getAgeData(team.players).bandwidth) * 100) / 100 }} jaar
-                  [{{ TeamAPI.getAgeData(team.players).min.toFixed(1) }} ~
-                  {{ TeamAPI.getAgeData(team.players).max.toFixed(1) }}]
-                </div>
-                <div>
-                  Spelbepalingen: <RuleColorLabel :ruleColor="team.ruleColor" />
-                </div>
+                <v-card
+                    outlined
+                    elevation="0"
+                    class="mb-4 pa-2"
+                    style="font-size: 0.9rem;"
+                    v-if="team.players && TeamAPI.getAgeData(team.players).average"
+                >
+                  <v-row dense align="center" class="px-2">
+                    <v-col cols="12" sm="4" lg="12" class="text-sm-left text-lg-left">
+                      <v-icon left small color="primary">mdi-account-group</v-icon>
+                      <strong>Gemiddelde:</strong>
+                      {{ TeamAPI.getAgeData(team.players).average.toFixed(1) }} jaar
+                    </v-col>
+                    <v-col cols="12" sm="4" lg="12" class="text-sm-center text-lg-left">
+                      <v-icon left small color="primary">mdi-ruler</v-icon>
+                      <strong>Bandbreedte:</strong>
+                      {{ TeamAPI.getAgeData(team.players).bandwidth.toFixed(2) }} jaar
+                      ({{ TeamAPI.getAgeData(team.players).min.toFixed(1) }} – {{ TeamAPI.getAgeData(team.players).max.toFixed(1) }})
+                    </v-col>
+                    <v-col cols="12" sm="4" lg="12" class="text-sm-right text-lg-left">
+                      <v-icon left small color="primary">mdi-check-decagram</v-icon>
+                      <strong>Spelbepalingen: </strong>
+                      <RuleColorLabel :ruleColor="team.ruleColor" />
+                    </v-col>
+                  </v-row>
+                </v-card>
               </v-col>
+
               <v-col cols="12" v-if="team.staff && team.staff.length > 0">
                 <v-subheader light>STAFF</v-subheader>
                 <v-list v-if="team.staff.length > 0">
@@ -74,29 +98,45 @@
       </v-row>
       <v-row class="pl-2" v-if="selected">
         <v-col cols="12">
-          <v-btn text x-small link :to="{path: '/team/'+selected['.key']}">
-            <v-icon x-small left>mdi-pencil</v-icon>
+          <v-btn color="primary" outlined small class="mr-2" @click="editInTeamBuilder(selected)">
+            <v-icon small left>mdi-account-hard-hat</v-icon>
+            Gebruik in Teambuilder
+          </v-btn>
+          <v-btn outlined small link :to="{path: '/team/'+selected['.key']}">
+            <v-icon small left>mdi-pencil</v-icon>
             Bewerken
           </v-btn>
         </v-col>
+
         <v-col cols="12">
-          <div>Gemiddelde: {{ TeamAPI.getAgeData(selected.players).average.toFixed(1) }} jaar</div>
-          <div>Bandbreedte: {{ Math.round(Number(TeamAPI.getAgeData(selected.players).bandwidth) * 100) / 100 }} jaar
-            [{{ TeamAPI.getAgeData(selected.players).min.toFixed(1) }} ~
-            {{ TeamAPI.getAgeData(selected.players).max.toFixed(1) }}]
-          </div>
-          <div>
-            Spelbepalingen: <RuleColorLabel :ruleColor="selected.ruleColor"/>
-          </div>
+          <v-card
+              outlined
+              elevation="0"
+              class="mb-4 pa-2"
+              style="font-size: 0.9rem;"
+              v-if="selected.players && TeamAPI.getAgeData(selected.players).average"
+          >
+            <v-row dense align="center" class="px-2">
+              <v-col cols="12" sm="4" class="text-sm-left">
+                <v-icon left small color="primary">mdi-account-group</v-icon>
+                <strong>Gemiddelde:</strong>
+                {{ TeamAPI.getAgeData(selected.players).average.toFixed(1) }} jaar
+              </v-col>
+              <v-col cols="12" sm="4" class="text-sm-center">
+                <v-icon left small color="primary">mdi-ruler</v-icon>
+                <strong>Bandbreedte:</strong>
+                {{ TeamAPI.getAgeData(selected.players).bandwidth.toFixed(2) }} jaar
+                ({{ TeamAPI.getAgeData(selected.players).min.toFixed(1) }} – {{ TeamAPI.getAgeData(selected.players).max.toFixed(1) }})
+              </v-col>
+              <v-col cols="12" sm="4" class="text-sm-right">
+                <v-icon left small color="primary">mdi-check-decagram</v-icon>
+                <strong>Spelbepalingen: </strong>
+                <RuleColorLabel :ruleColor="selected.ruleColor" />
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
-        <v-col cols="12" v-if="selected.staff && selected.staff.length > 0">
-          <v-subheader light>STAFF</v-subheader>
-          <v-list v-if="selected.staff.length > 0">
-            <v-list-item v-for="(person, index) in selected.staff" :key="index">
-              {{ person }}
-            </v-list-item>
-          </v-list>
-        </v-col>
+
         <v-col cols="12" class="flex-shrink-1 flex-grow-0 col-sm-auto flex-sm-shrink-1">
           <v-subheader light>SPELERS</v-subheader>
           <v-list v-if="selected.players.length > 0">
@@ -145,12 +185,19 @@ export default {
     }
   },
   mounted() {
-
   },
   methods: {
     sortTeams(teams) {
       teams.sort((a, b) => {
         return a.name < b.name ? -1 : 1;
+      })
+    },
+    editInTeamBuilder(team) {
+      this.$router.push({
+        name: 'TeamBuilder',
+        query: {
+          base_team: JSON.stringify(team),
+        }
       })
     }
   },

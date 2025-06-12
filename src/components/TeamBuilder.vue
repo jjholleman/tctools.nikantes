@@ -1,281 +1,268 @@
 <template>
-    <v-container v-if="this.team">
-        <v-row class="mb-8" no-gutters>
-            <v-switch :label="checkDateLabel"
-                      @change="toggleCheckDate(toggle_checkdate_btn)"
-                      class="d-flex mt-1 mt-sm-1 pa-2"
-                      dense
-                      hide-details
-                      inset
-                      v-model="toggle_checkdate_btn"/>
-        </v-row>
-        <v-alert
-                color="purple"
+  <v-container v-if="this.team">
+    <v-row no-gutters class="mb-8">
+      <v-col>
+        <v-btn x-small text link @click="$router.back()" color="primary">
+          <v-icon left>mdi-arrow-left</v-icon>
+          terug
+        </v-btn>
+      </v-col>
+      <v-switch v-model="toggle_checkdate_btn"
+                hide-details
+                inset
                 dense
-                prominent
-                transition="scale-transition"
-                type="error"
-                v-if="(this.division.avg_age_limits) && (teamAvgAge < this.division.avg_age_limits.min || teamAvgAge > this.division.avg_age_limits.max)"
-        >
-            <div>Gemiddelde leeftijd {{team.division}}-teams tussen:
-                {{division.avg_age_limits.min}}-{{division.avg_age_limits.max}} jaar
-            </div>
-            <div> - Huidige opstelling: {{teamAvgAge.toFixed(1)}} jaar</div>
-        </v-alert>
-        <v-select
-                :items="divisions"
-                @change="onChangeSelectedDivision"
-                item-text="name"
-                label="Leeftijdsgroep"
-                required
-                v-model="team.division"
-        ></v-select>
-        <v-row class="mb-4" no-gutters v-if="team && team.players">
-            <v-col class="pa-0 ma-0" cols="12">Heren</v-col>
-            <v-col class="my-4">
-                <v-alert class="mb-0"
-                         dense
-                         prominent
-                         transition="scale-transition"
-                         type="error"
-                         v-if="tooOldPlayers.male && tooOldPlayers.male.length > 0"
-                >
-                    <div>Maximale leeftijd {{team.division}}-teams: {{team.max_age}} jaar</div>
-                    <div :key="index" v-for="(player, index) in tooOldPlayers.male">
-                        - {{player.fullname}} ({{player.knkv_age}})
-                    </div>
-                </v-alert>
-            </v-col>
-            <multiselect
-                    :custom-label="customLabel"
-                    :multiple="true"
-                    :options="players"
-                    :taggable="true"
-                    @input="function() {updateTooOldPlayers(team.players.males, 'male'); startCombinePlayers()}"
-                    label="fullname"
-                    placeholder="Zoek speler"
-                    tag-placeholder="Kies speler"
-                    track-by="fullname"
-                    v-if="team.players"
-                    v-model="team.players.males"
-            ></multiselect>
-        </v-row>
-        <v-row class="mb-4" no-gutters v-if="team.players">
-            <v-col class="pa-0 ma-0" cols="12">Dames</v-col>
-            <v-col class="my-4">
-                <v-alert class="mb-0"
-                         dense
-                         prominent
-                         transition="scale-transition"
-                         type="error"
-                         v-if="tooOldPlayers.female && tooOldPlayers.female.length > 0"
-                >
-                    <div>Maximale leeftijd {{team.division}}-teams: {{team.max_age}} jaar</div>
-                    <div :key="index" v-for="(player, index) in tooOldPlayers.female">
-                        - {{player.fullname}} ({{player.knkv_age}})
-                    </div>
-                </v-alert>
-            </v-col>
-            <multiselect
-                    :custom-label="customLabel"
-                    :multiple="true"
-                    :options="players"
-                    :taggable="true"
-                    @input="function() {updateTooOldPlayers(team.players.females, 'female'); startCombinePlayers()}"
-                    label="fullname"
-                    placeholder="Zoek speler"
-                    tag-placeholder="Kies speler"
-                    track-by="fullname"
-                    v-if="team.players.females"
-                    v-model="team.players.females"
-            ></multiselect>
-        </v-row>
-        <v-row v-if="illegalTeamCombinations.length > 0" class="pt-4" no-gutters>
-            <v-col cols="12">
-                <v-alert dense outlined type="error" class="mb-1">Onderstaande opstellingen zijn op geen enkel moment gedurende de wedstrijd toegestaan</v-alert>
-            </v-col>
-            <v-col v-for="(team, index) in illegalTeamCombinations" :key="index" cols="12" class="col-sm-6 col-md-4 col-lg-3">
-                <v-list>
-                    <v-list-item :key="iPlayer" class="mr-2" v-for="(player, iPlayer) in team" dense>
-                        {{player.fullname}}
-                    </v-list-item>
-                </v-list>
-            </v-col>
-        </v-row>
-    </v-container>
+                class="d-inline-flex mt-1 mt-sm-1 pa-2"
+                @change="toggleCheckDate(toggle_checkdate_btn)"
+                :label="checkDateLabel"/>
+    </v-row>
+
+    <v-card v-if="teamAgeData.average && teamAgeData.bandwidth"
+            outlined elevation="0" class="mb-4 pa-2" style="font-size: 0.9rem;">
+      <v-row dense align="center" class="px-2">
+        <v-col cols="12" sm="4" class="text-sm-left">
+          <v-icon left small color="primary">mdi-account-group</v-icon>
+          <strong>Gemiddelde:</strong> {{ teamAgeData.average.toFixed(1) }} jaar
+        </v-col>
+        <v-col cols="12" sm="4" class="text-sm-center">
+          <v-icon left small color="primary">mdi-ruler</v-icon>
+          <strong>Bandbreedte:</strong>
+          {{ teamAgeData.bandwidth.toFixed(2) }} jaar
+          ({{ teamAgeData.min.toFixed(1) }} – {{ teamAgeData.max.toFixed(1) }})
+        </v-col>
+        <v-col cols="12" sm="4" class="text-sm-right">
+          <v-icon left small color="primary">mdi-account-check</v-icon>
+          <strong>Max. invaller:</strong> {{ maxAllowedReserveAge.toFixed(1) }} jaar
+        </v-col>
+      </v-row>
+    </v-card>
+
+    <v-select label="Kleur spelbepaling"
+              v-model="team.ruleColor"
+              :rules="[rules.required]"
+              :items="colorOptions"
+              item-text="name"
+              item-value="value"
+              required
+    ></v-select>
+
+    <v-row no-gutters class="mb-4" v-if="players">
+      <v-col cols="12" class="pb-4 ma-0">
+        <v-chip>Basis Spelers</v-chip>
+      </v-col>
+      <multiselect
+          v-if="players"
+          v-model="team.players"
+          tag-placeholder="Kies speler"
+          placeholder="Zoek speler"
+          label="fullname" track-by="fullname"
+          :custom-label="customLabel"
+          :options="players"
+          :multiple="true"
+          :taggable="true"
+      ></multiselect>
+    </v-row>
+    <v-row no-gutters class="mb-4" v-if="players">
+      <v-col cols="12" class="pb-4 ma-0">
+        <v-chip>Invallers</v-chip>
+      </v-col>
+      <multiselect
+          v-model="team.reserves"
+          tag-placeholder="Kies reserve speler"
+          placeholder="Zoek reserve speler"
+          label="fullname" track-by="id"
+          :custom-label="customLabel"
+          :options="reserveOptions"
+          :multiple="true"
+          :taggable="true"
+          @input="validateReserves"
+      />
+    </v-row>
+
+    <v-alert
+        v-if="
+          (team.ruleColor && ['blue', 'green'].includes(team.ruleColor) && teamAgeData.bandwidth > 2)
+          || teamAgeData.bandwidth > 3"
+        color="red"
+        dense
+        prominent
+        transition="scale-transition"
+        type="error"
+    >
+      <div class="font-weight-bold">
+        Bandbreedte: {{ Math.round(Number(teamAgeData.bandwidth) * 100) / 100 }} jaar
+        [{{ teamAgeData.min.toFixed(1) }} ~ {{ teamAgeData.max.toFixed(1) }}]
+      </div>
+      <div v-if="team.ruleColor && ['blue', 'green'].includes(team.ruleColor)">
+        De maximale bandbreedte bij 4-tallen (blauw en groen) is 2 jaar.
+      </div>
+    </v-alert>
+    <v-alert
+        v-if="team.ruleColor
+          && ['red', 'orange', 'yellow'].includes(team.ruleColor)
+          && teamAgeData.average
+          && teamAgeData.average < 9"
+        color="black"
+        dense
+        prominent
+        transition="scale-transition"
+        type="error"
+    >
+      <div class="font-weight-bold">Pas vanaf een gemiddelde leeftijd van 9,0 jaar mag een 8-tal worden gevormd</div>
+      <div>Huidige gemiddelde leeftijd van het team: {{ teamAgeData.average.toFixed(1) }}</div>
+    </v-alert>
+    <v-alert
+        v-if="invalidReserves.length > 0"
+        color="red"
+        dense
+        prominent
+        transition="scale-transition"
+        type="error"
+    >
+      <div class="font-weight-bold">Ongeldige reserves:</div>
+      <div class="mb-2">
+        Reserves moeten jonger zijn dan het gemiddelde ({{ teamAgeData.average.toFixed(1) }} jaar) <br>
+        of niet ouder dan <strong>{{ maxAllowedReserveAge.toFixed(1) }} jaar</strong>.
+      </div>
+      <ul class="mb-0">
+        <li v-for="player in invalidReserves" :key="player.fullname">
+          {{ player.fullname }} ({{ player.knkv_age.toFixed(1) }} jaar) is ouder dan toegestaan.
+        </li>
+      </ul>
+    </v-alert>
+
+  </v-container>
 </template>
 
 <script>
-    /* eslint-disable no-console */
+/* eslint-disable no-console */
 
-    import PlayerAPI from "../api/Player";
-    import moment from 'moment'
-    import DivisionAPI from "../api/Teams";
+import PlayerAPI from "../api/Player";
+import moment from 'moment'
+import TeamAPI from "@/api/Teams";
 
-    export default {
-        name: "TeamBuilder",
-        data() {
-            return {
-                team: {
-                    players: {
-                        males: [],
-                        females: [],
-                    },
-                    division: "Senioren",
-                },
-                original_team: {},
-                rules: {
-                    required: value => !!value || 'Verplicht.',
-                },
-                valid: true,
-                divisions: DivisionAPI.getAllDivisions(),
-                players: [],
-                tooOldPlayers: {},
-                division: {},
-                toggle_checkdate_btn: false,
-                checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add(1, "year").format("YY"),
-                teamCombinationsSize: 8,
-                teamCombinations: [],
-                illegalTeamCombinations: [],
-            }
-        },
-        computed: {
-            teamAvgAge: function () {
-                let ages = [];
-                let avgAge = false;
-                if (Object.keys(this.team).length !== 0 && this.team.constructor === Object) {
-                    this.team.players.males.forEach(player => {
-                        ages.push(player.knkv_age)
-                    });
-                    this.team.players.females.forEach(player => {
-                        ages.push(player.knkv_age)
-                    });
-                    avgAge = ages.reduce((a, b) => a + b, 0) / ages.length;
-                }
-                return avgAge;
-            },
-        },
-        mounted() {
-            this.players = PlayerAPI.getAll();
-            this.setAgeLimits(this.team.division);
-        },
-        methods: {
-            customLabel({fullname, knkv_age}) {
-                return `${fullname} (${knkv_age})`
-            },
-            updateTooOldPlayers(players, gender) {
-                let tooOldPlayers = [];
-                players.forEach(player => {
-                    if (player.knkv_age > this.team.max_age) {
-                        tooOldPlayers.push(player)
-                    }
-                });
-                this.tooOldPlayers[gender] = tooOldPlayers;
-            },
-            toggleCheckDate(next) {
-                this.team.players.males.forEach((player, index) => {
-                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
-                    this.team.players.males[index] = player;
-                });
-                this.team.players.females.forEach((player, index) => {
-                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
-                    this.team.players.females[index] = player;
-                });
-                this.players.forEach((player, index) => {
-                    player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
-                    this.players[index] = player;
-                });
-            },
-            setAgeLimits(division) {
-                this.team.max_age = DivisionAPI.getDivisionMaxAge(division);
-                this.division.max_age_limit = this.team.max_age;
-                this.division.avg_age_limits = DivisionAPI.getDivisionAgeLimit(division);
-                this.division.teamSize = DivisionAPI.getDivisionTeamSize(division);
-                this.updateTooOldPlayers(this.team.players.males, 'male');
-                this.updateTooOldPlayers(this.team.players.females, 'female');
-            },
-            startCombinePlayers() {
-                const players = [];
-                this.illegalTeamCombinations = [];
-                Object.keys(this.team.players).forEach(gender => {
-                    this.team.players[gender].forEach(player => {
-                        players.push(player);
-                    })
-                });
-                if (players.length >= 4) {
-                    this.teamCombinations = [];
-                    if (this.team.division === "D" && (players.length >= 4 && players.length < 8)) { // D 4Korfbal exception.
-                        this.teamCombinationsSize = 4;
-                    } else {
-                        this.teamCombinationsSize = this.division.teamSize;
-                    }
-                    this.teamCombinations = this.k_combinations(players, this.teamCombinationsSize);
-                    this.illegalTeamCombinations = this.getIllegalTeamCombinations(this.teamCombinations, this.division.avg_age_limits.max);
-                }
-            },
-            k_combinations(set, k) {
-                let i, j, combs, head, tailcombs;
-
-                // There is no way to take e.g. sets of 5 elements from a set of 4.
-                if (k > set.length || k <= 0) {
-                    return [];
-                }
-
-                // K-sized set has only one K-sized subset.
-                if (k === set.length) {
-                    return [set];
-                }
-
-                // There is N 1-sized subsets in a N-sized set.
-                if (k === 1) {
-                    combs = [];
-                    for (i = 0; i < set.length; i++) {
-                        combs.push([set[i]]);
-                    }
-                    return combs;
-                }
-                combs = [];
-                for (i = 0; i < set.length - k + 1; i++) {
-                    // head is a list that includes only our current element.
-                    head = set.slice(i, i + 1);
-                    // We take smaller combinations from the subsequent elements
-                    tailcombs = this.k_combinations(set.slice(i + 1), k - 1);
-                    // For each (k-1)-combination we join it with the current
-                    // and store it to the set of k-combinations.
-                    for (j = 0; j < tailcombs.length; j++) {
-                        combs.push(head.concat(tailcombs[j]));
-                    }
-                }
-                return combs;
-            },
-            getIllegalTeamCombinations(combinations, maxAvg) {
-                const illegalTeams = [];
-                combinations.forEach(team => {
-                    const avgAge = this.getTeamAvgAge(team);
-                    if (avgAge > maxAvg) {
-                        illegalTeams.push(team);
-                    }
-                });
-                return illegalTeams;
-            },
-            getTeamAvgAge(team) {
-                const ages = [];
-                team.forEach(player => {
-                    ages.push(player.knkv_age);
-                });
-                return ages.reduce((a, b) => a + b, 0) / ages.length;
-            },
-            onChangeSelectedDivision(division) {
-                this.setAgeLimits(division);
-                this.startCombinePlayers();
-            }
-        },
-        filters: {
-            moment: function (date, format) {
-                return moment(date).format(format)
-            }
-        },
+export default {
+  name: "TeamBuilder",
+  props: {
+    base_team: {
+      type: Object,
+      default: null
     }
+  },
+  data() {
+    return {
+      rules: {
+        required: value => !!value || 'Verplicht.',
+      },
+      TeamAPI: TeamAPI,
+      team: {},
+      original_team: {},
+      ruleColors: TeamAPI.getRuleColors(),
+      players: [],
+      staffInput: "",
+      staff: [],
+      toggle_checkdate_btn: false,
+      checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add(1, "year").format("YY"),
+      invalidReserves: [],
+      maxAllowedReserveAge: null,
+    }
+  },
+  computed: {
+    reserveOptions() {
+      const baseIds = Array.isArray(this.team.players)
+          ? this.team.players.map(p => p.id)
+          : [];
+
+      return this.players.filter(player => !baseIds.includes(player.id));
+    },
+    teamAgeData: function () {
+      let data = {
+        average: null,
+        bandwidth: null,
+        min: null,
+        max: null,
+      }
+
+      if (Object.keys(this.team).length !== 0 && this.team.players && Object.keys(this.team.players).length !== 0 && this.team.constructor === Object) {
+        data = TeamAPI.getAgeData(this.team.players)
+      }
+
+      return data
+    },
+    colorOptions() {
+      return Object.entries(this.ruleColors).map(([key, value]) => ({
+        value: key,
+        name: value.name,
+      }));
+    },
+  },
+  mounted() {
+    if (this.base_team) {
+      this.team = this.base_team;
+    }
+    this.players = PlayerAPI.getAll();
+  },
+  watch: {
+    'team.players': {
+      handler() {
+        this.validateReserves();
+      },
+      deep: true
+    },
+    'team.reserves': {
+      handler() {
+        this.validateReserves();
+      },
+      deep: true
+    }
+  },
+  methods: {
+    customLabel({fullname, knkv_age}) {
+      return `${fullname} (${knkv_age.toFixed(1)})`
+    },
+    toggleCheckDate(next) {
+      this.team.players.forEach((player, index) => {
+        player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+        this.team.players[index] = player;
+      });
+      this.players.forEach((player, index) => {
+        player = PlayerAPI.getPlayerKNKVAge(player, PlayerAPI.getCheckDate(next));
+        this.players[index] = player;
+      });
+    },
+    validateReserves() {
+      this.invalidReserves = [];
+
+      if (!this.team?.players?.length) {
+        this.maxAllowedReserveAge = null;
+        return;
+      }
+
+      const ages = this.team.players.map(p => p.knkv_age);
+      const average = ages.reduce((sum, age) => sum + age, 0) / ages.length;
+      const oldest = Math.max(...ages);
+      const maxAllowed = Math.max(average + 1.5, oldest);
+      this.maxAllowedReserveAge = maxAllowed;
+
+      if (!this.team?.reserves?.length) return;
+
+      this.team.reserves.forEach(reserve => {
+        const age = reserve.knkv_age;
+        const isYounger = age < average;
+        const isWithinRange = age <= maxAllowed;
+        const isEqualToOldest = Math.abs(age - oldest) < 0.01;
+
+        if (!isYounger && !isWithinRange && !isEqualToOldest) {
+          this.invalidReserves.push(reserve);
+        }
+      });
+    }
+  },
+  filters: {
+    moment: function (date, format) {
+      return moment(date).format(format)
+    }
+  },
+}
 </script>
 
 <style scoped>
