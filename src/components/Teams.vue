@@ -2,12 +2,19 @@
   <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
   <v-container>
     <v-row>
-      <v-col>
+      <v-col class="flex-grow-0" cols="12" sm="auto" order-sm="2">
         <v-btn color="primary"
                outlined link :to="{name: 'add-team'}">
           <v-icon left>mdi-plus</v-icon>
           Nieuw team
         </v-btn>
+      </v-col>
+      <v-col>
+        <v-switch v-model="toggle_checkdate_btn"
+                  hide-details
+                  class="d-inline-flex mt-1 mt-sm-1 pa-2"
+                  @change="toggleCheckDate(toggle_checkdate_btn)"
+                  :label="checkDateLabel"/>
       </v-col>
     </v-row>
     <v-row class="hidden-sm-and-down">
@@ -159,6 +166,7 @@
 
 import {db} from "./../firebase";
 import TeamAPI from "../api/Teams";
+import PlayerAPI from "../api/Player";
 import RuleColorLabel from "@/components/partials/RuleColorLabel.vue";
 
 export default {
@@ -170,7 +178,12 @@ export default {
       tab: null,
       selected: undefined,
       TeamAPI: TeamAPI,
+      PlayerAPI: PlayerAPI,
       ruleColors: TeamAPI.getRuleColors(),
+      toggle_checkdate_btn: false,
+      checkDate: PlayerAPI.getCheckDate(),
+      nextCheckDate: PlayerAPI.getCheckDate(true),
+      checkDateLabel: "Peildatum " + PlayerAPI.getCheckDate(true).format("YY") + "-" + PlayerAPI.getCheckDate(true).add(1, "year").format("YY"),
     };
   },
   firestore() {
@@ -178,6 +191,12 @@ export default {
       teamsRef: {
         ref: db.collection('teams'),
         resolve: (data) => {
+          data.forEach((team) => {
+            team.players.forEach((player) => {
+              return PlayerAPI.getPlayerKNKVAge(player)
+            })
+          })
+
           this.teams = data;
           this.sortTeams(this.teams);
         }
@@ -199,7 +218,18 @@ export default {
           base_team: JSON.stringify(team),
         }
       })
-    }
+    },
+    toggleCheckDate(next) {
+      let checkDate = this.checkDate;
+      if (next === true) {
+        checkDate = this.nextCheckDate;
+      }
+      this.teams.forEach((team) => {
+        team.players.forEach((player) => {
+          return PlayerAPI.getPlayerKNKVAge(player, checkDate)
+        })
+      })
+    },
   },
 };
 </script>
