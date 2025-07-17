@@ -193,7 +193,7 @@ export default {
         resolve: (data) => {
           data.forEach((team) => {
             team.players.forEach((player) => {
-              return PlayerAPI.getPlayerKNKVAge(player)
+              return PlayerAPI.getPlayerKNKVAge(player, this.checkDate)
             })
           })
 
